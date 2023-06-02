@@ -12,9 +12,9 @@ export class AuthService {
     private authRepository: Repository<Auth>,
   ) {}
 
-  async create(createAuthDto: CreateAuthDto) {
-    const user = await this.authRepository.insert(createAuthDto);
-    return user;
+  async register(createAuthDto: CreateAuthDto) {
+    /*     const user = await this.authRepository.insert(createAuthDto);
+    return user; */
   }
 
   async findAll() {

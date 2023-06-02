@@ -11,13 +11,13 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 
-@Controller('auth')
+@Controller('signup')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  signUp(@Body() createAuthDto: CreateAuthDto) {
+    return this.authService.register(createAuthDto);
   }
 
   @Get()
