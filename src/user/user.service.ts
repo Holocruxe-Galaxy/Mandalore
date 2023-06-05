@@ -18,9 +18,11 @@ export class UserService {
       name: createUserDto.group,
     });
 
-    this.userRepository.insert(group);
+    await this.userRepository.insert(group);
 
     console.log(group);
+
+    delete group.id;
 
     const username = createUserDto.username;
 
