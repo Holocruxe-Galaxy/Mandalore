@@ -6,5 +6,5 @@ export class Auth {
   id: number;
 
   @Column()
-  firstName: string;
+  username: string;
 }

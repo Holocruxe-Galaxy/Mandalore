@@ -1,5 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { Auth } from './entities/auth.entity';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -10,11 +17,21 @@ export class AuthService {
   constructor(
     @InjectRepository(Auth)
     private authRepository: Repository<Auth>,
+    @Inject(forwardRef(() => ConfigService))
+    private configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
 
-  async create(createAuthDto: CreateAuthDto) {
-    const user = await this.authRepository.insert(createAuthDto);
-    return user;
+  async register(createAuthDto: CreateAuthDto) {
+    try {
+      const { data } = await this.httpService.axiosRef.post<Promise<string>>(
+        `${this.configService.get<string>('AUTHMICRO-SERVICE')}/register`,
+        createAuthDto,
+      );
+      return data;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async findAll() {
