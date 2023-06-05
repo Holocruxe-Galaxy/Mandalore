@@ -14,10 +14,6 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const group: Group = await this.groupRepository.insert(createUserDto.group);
-
-    const user = await this.userRepository.insert(createUserDto);
-    console.log(user);
     return 'This action adds a new user';
   }
 
