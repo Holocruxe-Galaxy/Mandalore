@@ -28,7 +28,7 @@ export class UserService {
     const user = this.userRepository.create({ group, username });
 
     console.log('first try: ', user);
-    const hola = await this.userRepository.insert(user);
+    const hola = await this.userRepository.save(user);
     console.log('hola, ', hola);
     const justCreated = await this.userRepository.findBy({ id: user.id });
     console.log('second try: ', user);
