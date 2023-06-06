@@ -18,18 +18,18 @@ export class UserService {
       name: createUserDto.group,
     });
 
-    await this.userRepository.insert(group);
+    await this.groupRepository.insert(group);
 
     console.log(group);
 
-    delete group.id;
-
     const username = createUserDto.username;
 
-    const user = this.userRepository.create({ ...group, username });
+    this.userRepository.create();
+    const user = this.userRepository.create({ group, username });
 
     console.log('first try: ', user);
-    await this.userRepository.insert(user);
+    const hola = await this.userRepository.insert(user);
+    console.log('hola, ', hola);
     const justCreated = await this.userRepository.findBy({ id: user.id });
     console.log('second try: ', user);
     console.log('third try: ', justCreated);

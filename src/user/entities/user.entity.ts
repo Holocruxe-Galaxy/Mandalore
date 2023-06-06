@@ -3,12 +3,12 @@ import { Group } from './group.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   username: string;
 
   @OneToMany(() => Group, (group) => group.name)
-  group: Group[];
+  group: Group;
 }
