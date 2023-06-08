@@ -1,18 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from './';
-import { People } from '../interfaces';
 
 @Entity()
-export class Group {
+export class ProfessionalProfile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.group)
+  @ManyToOne(() => User, (user) => user.professionalProfile)
   user: User;
-
-  @Column()
-  name: string;
-
-  @Column('json')
-  people: People[];
 }
