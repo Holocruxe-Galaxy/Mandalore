@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { Auth } from './entities/auth.entity';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { LoginAuthDto, SignupAuthDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -21,11 +21,11 @@ export class AuthService {
     private readonly httpService: HttpService,
   ) {}
 
-  async register(createAuthDto: CreateAuthDto) {
+  async register(signupAuthDto: SignupAuthDto) {
     try {
       const { data } = await this.httpService.axiosRef.post<Promise<string>>(
         `${this.configService.get<string>('AUTHMICRO-SERVICE')}/register`,
-        createAuthDto,
+        signupAuthDto,
       );
       return data;
     } catch (error) {
@@ -33,11 +33,11 @@ export class AuthService {
     }
   }
 
-  async login(createAuthDto: CreateAuthDto) {
+  async login(loginAuthDto: LoginAuthDto) {
     try {
       const { data } = await this.httpService.axiosRef.post<Promise<string>>(
         `${this.configService.get<string>('AUTHMICRO-SERVICE')}/login`,
-        createAuthDto,
+        loginAuthDto,
       );
       return data;
     } catch (error) {

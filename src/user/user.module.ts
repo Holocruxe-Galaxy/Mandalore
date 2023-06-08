@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { ProfessionalProfile, Group, LikesAndDislikes, User } from './entities';
+import { ProfessionalProfileModule } from './professional-profile/professional-profile.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ProfessionalProfile, Group, LikesAndDislikes, User } from './entities';
       LikesAndDislikes,
       User,
     ]),
+    ProfessionalProfileModule,
   ],
   controllers: [UserController],
   providers: [UserService],
