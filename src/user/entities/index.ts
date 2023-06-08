@@ -1,4 +1,5 @@
-export { ProfessionalProfile } from './professionalProfile.entity';
-export { LikesAndDislikes } from './likesAndDislikes.entity';
-export { Group } from './group.entity';
 export { User } from './user.entity';
+
+export { Group } from './../group/entities';
+export { ProfessionalProfile } from './../professional-profile/entities';
+export { LikesAndDislikes } from './../likes-and-dislikes/entities';
