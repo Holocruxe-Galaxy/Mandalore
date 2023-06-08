@@ -41,10 +41,7 @@ export class UserService {
       contactLink: 'http://carlos.com',
     };
 
-    // console.log('first try: ', user);
     await this.userRepository.save(user);
-    // console.log('hola, ', hola);
-    // console.log('second try: ', user);
     const peopleGroup = await this.groupRepository.find({
       relations: ['user'],
       where: { user: { id: user.id } },
@@ -52,16 +49,10 @@ export class UserService {
     peopleGroup[0].people.push(juan);
     peopleGroup[1].people.push(carlos);
     peopleGroup.map(async (foo) => {
-      const thisAintNoWorkin = await this.groupRepository.update(foo.id, {
+      await this.groupRepository.update(foo.id, {
         people: foo.people,
       });
-      console.log('This workin? ', thisAintNoWorkin);
     });
-    console.log(peopleGroup[0].id);
-    const uniqueGroup = await this.groupRepository.findOne({
-      where: { id: peopleGroup[0].id },
-    });
-    console.log('hola, ¿no?', uniqueGroup);
     return 'This action adds a new user';
   }
 
