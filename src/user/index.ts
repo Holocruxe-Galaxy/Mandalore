@@ -1,7 +1,7 @@
-export { ContactInfoModule } from './contact-info/contact-info.module';
-export { GroupModule } from './group/group.module';
-export { LikesAndDislikesModule } from './likes-and-dislikes/likes-and-dislikes.module';
-export { LocationModule } from './location/location.module';
-export { MedicalModule } from './medical/medical.module';
-export { ProfessionalProfileModule } from './professional-profile/professional-profile.module';
-export { ShoppingModule } from './shopping/shopping.module';
+export { ContactInfoModule } from './sub-modules/contact-info/contact-info.module';
+export { GroupModule } from './sub-modules/group/group.module';
+export { LikesAndDislikesModule } from './sub-modules/likes-and-dislikes/likes-and-dislikes.module';
+export { LocationModule } from './sub-modules/location/location.module';
+export { MedicalModule } from './sub-modules/medical/medical.module';
+export { ProfessionalProfileModule } from './sub-modules/professional-profile/professional-profile.module';
+export { ShoppingModule } from './sub-modules/shopping/shopping.module';

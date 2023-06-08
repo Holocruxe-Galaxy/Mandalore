@@ -20,4 +20,10 @@ export class Professional {
 
   @OneToMany(() => Institution, (institution) => institution.professional)
   internship: Institution;
+
+  @Column('simple-array')
+  softSkills: string[];
+
+  @Column('simple-array')
+  hardSkills: string[];
 }

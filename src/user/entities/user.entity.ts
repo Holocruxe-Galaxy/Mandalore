@@ -6,6 +6,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Group, LikesAndDislikes, ProfessionalProfile } from './';
+import { StatusType } from '../types';
 
 @Entity()
 export class User {
@@ -14,6 +15,9 @@ export class User {
 
   @Column()
   username: string;
+
+  @Column()
+  status: StatusType;
 
   @OneToMany(() => Group, (group) => group.user, {
     nullable: true,
