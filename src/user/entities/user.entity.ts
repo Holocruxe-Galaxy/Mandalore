@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Group, LikesAndDislikes, ProfessionalProfile } from './';
 
 @Entity()
@@ -9,25 +15,27 @@ export class User {
   @Column()
   username: string;
 
-  @OneToMany(() => Group, (group) => group.user, { cascade: true, eager: true })
+  @OneToMany(() => Group, (group) => group.user, {
+    nullable: true,
+  })
   group: Group[];
 
-  @OneToMany(
+  @OneToOne(
     () => ProfessionalProfile,
     (professionalProfile) => professionalProfile.user,
     {
       cascade: true,
-      eager: true,
+      nullable: true,
     },
   )
-  professionalProfile: ProfessionalProfile[];
+  professionalProfile: ProfessionalProfile;
 
   @OneToMany(
     () => LikesAndDislikes,
     (likesAndDislikes) => likesAndDislikes.user,
     {
       cascade: true,
-      eager: true,
+      nullable: true,
     },
   )
   likesAndDislikes: LikesAndDislikes[];
