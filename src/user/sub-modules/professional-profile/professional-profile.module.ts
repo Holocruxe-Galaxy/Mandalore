@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfessionalProfileService } from './professional-profile.service';
 import { ProfessionalProfileController } from './professional-profile.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Educational,
   Institution,
