@@ -19,9 +19,7 @@ export class User {
   @Column()
   status: StatusType;
 
-  @OneToMany(() => Group, (group) => group.user, {
-    nullable: true,
-  })
+  @OneToMany(() => Group, (group) => group.user)
   group: Group[];
 
   @OneToOne(

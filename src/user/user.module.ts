@@ -16,9 +16,9 @@ import {
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ProfessionalProfile,
       Group,
       LikesAndDislikes,
+      ProfessionalProfile,
       User,
     ]),
     ContactInfoModule,
