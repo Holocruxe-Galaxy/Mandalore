@@ -9,7 +9,7 @@ export class PersonalService {
   }
 
   findAll() {
-    return `This action returns all personal`;
+    return console.log(`This action returns all personal`);
   }
 
   findOne(id: number) {

@@ -9,7 +9,7 @@ export class ContactInfoService {
   }
 
   findAll() {
-    return `This action returns all contactInfo`;
+    return console.log(`This action returns all contactInfo`);
   }
 
   findOne(id: number) {

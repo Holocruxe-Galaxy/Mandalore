@@ -10,6 +10,7 @@ import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { Auth } from './entities/auth.entity';
 import { LoginAuthDto, SignupAuthDto } from './dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,9 @@ export class AuthService {
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
     private readonly httpService: HttpService,
+
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService,
   ) {}
 
   async register(signupAuthDto: SignupAuthDto) {
@@ -45,13 +49,9 @@ export class AuthService {
     }
   }
 
-  async stepManager(step, loginAuthDto: string) {
+  async stepManager(step: number, dto: string) {
     try {
-      // const { data } = await this.httpService.axiosRef.post<Promise<string>>(
-      //   `${this.configService.get<string>('AUTHMICRO-SERVICE')}/login`,
-      //   loginAuthDto,
-      // );
-      // return data;
+      return this.userService.stepFollower(step, dto);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

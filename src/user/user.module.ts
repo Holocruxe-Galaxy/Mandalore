@@ -1,8 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { ProfessionalProfile, Group, LikesAndDislikes, User } from './entities';
+import {
+  ProfessionalProfile,
+  Group,
+  LikesAndDislikes,
+  User,
+  Personal,
+} from './entities';
 import {
   ContactInfoModule,
   GroupModule,
@@ -12,26 +18,28 @@ import {
   PersonalModule,
   ProfessionalProfileModule,
   ShoppingModule,
-} from './';
+} from './modules';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Group,
       LikesAndDislikes,
+      Personal,
       ProfessionalProfile,
       User,
     ]),
-    ContactInfoModule,
+    forwardRef(() => ContactInfoModule),
     GroupModule,
     LikesAndDislikesModule,
     LocationModule,
     MedicalModule,
-    PersonalModule,
+    forwardRef(() => PersonalModule),
     ProfessionalProfileModule,
     ShoppingModule,
   ],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
