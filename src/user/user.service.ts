@@ -1,58 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Group, User } from './entities';
-import { People } from './interfaces';
+import { People } from './sub-modules/group/interfaces';
 
 @Injectable()
 export class UserService {
   constructor(
+    @InjectEntityManager()
+    private entityManager: EntityManager,
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const username = createUserDto.username;
+    const user = this.userRepository.create({ username: 'emi', group: [] });
 
-    this.userRepository.create();
-    const user = this.userRepository.create({
-      group: [
-        this.groupRepository.create({
-          name: createUserDto.group,
-          people: [],
-        }),
-        this.groupRepository.create({
-          name: 'fulbo',
-          people: [],
-        }),
-      ],
-      username,
-    });
+    // const group = this.groupRepository.create({
+    //   name: 'friends',
+    //   people: [],
+    //   user: { id: '' },
+    // });
 
-    const juan: People = {
-      name: 'Juan',
-    };
-
-    const carlos: People = {
-      name: 'Carlos',
-      contactLink: 'http://carlos.com',
-    };
-
-    await this.userRepository.save(user);
-    const peopleGroup = await this.groupRepository.find({
-      relations: ['user'],
-      where: { user: { id: user.id } },
-    });
-    peopleGroup[0].people.push(juan);
-    peopleGroup[1].people.push(carlos);
-    peopleGroup.map(async (foo) => {
-      await this.groupRepository.update(foo.id, {
-        people: foo.people,
-      });
-    });
+    // await this.groupRepository.save(group);
     return 'This action adds a new user';
   }
 

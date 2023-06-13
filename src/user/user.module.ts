@@ -3,17 +3,33 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { ProfessionalProfile, Group, LikesAndDislikes, User } from './entities';
-import { ProfessionalProfileModule } from './professional-profile/professional-profile.module';
+import {
+  ContactInfoModule,
+  GroupModule,
+  LikesAndDislikesModule,
+  LocationModule,
+  MedicalModule,
+  PersonalModule,
+  ProfessionalProfileModule,
+  ShoppingModule,
+} from './';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ProfessionalProfile,
       Group,
       LikesAndDislikes,
+      ProfessionalProfile,
       User,
     ]),
+    ContactInfoModule,
+    GroupModule,
+    LikesAndDislikesModule,
+    LocationModule,
+    MedicalModule,
+    PersonalModule,
     ProfessionalProfileModule,
+    ShoppingModule,
   ],
   controllers: [UserController],
   providers: [UserService],
