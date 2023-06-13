@@ -17,7 +17,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    // const user = this.userRepository.create({ username: 'emi', group: [] });
+    const user = this.userRepository.create({ username: 'emi', group: [] });
 
     // const group = this.groupRepository.create({
     //   name: 'friends',

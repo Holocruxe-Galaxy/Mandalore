@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { IsString, IsEmail } from 'class-validator';
 
 export class SignupAuthDto {
   @IsString()
@@ -12,10 +12,6 @@ export class SignupAuthDto {
 
   @IsEmail()
   email: string;
-
-  @IsOptional()
-  @IsString()
-  image_profile_url: string;
 
   @IsString()
   birthdate: string;

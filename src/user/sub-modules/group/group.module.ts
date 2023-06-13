@@ -5,7 +5,7 @@ import { GroupController } from './group.controller';
 import { Group } from './entities';
 
 @Module({
-  // imports: [TypeOrmModule.forFeature([Group])],
+  imports: [TypeOrmModule.forFeature([Group])],
   controllers: [GroupController],
   providers: [GroupService],
 })

@@ -19,6 +19,9 @@ export class User {
   @Column()
   status: StatusType;
 
+  @Column()
+  account: string;
+
   @OneToMany(() => Group, (group) => group.user)
   group: Group[];
 

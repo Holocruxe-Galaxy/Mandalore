@@ -22,5 +22,6 @@ import {
   ],
   controllers: [ProfessionalProfileController],
   providers: [ProfessionalProfileService],
+  exports: [ProfessionalProfileService],
 })
 export class ProfessionalProfileModule {}

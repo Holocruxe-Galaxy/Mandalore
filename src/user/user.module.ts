@@ -9,6 +9,7 @@ import {
   LikesAndDislikesModule,
   LocationModule,
   MedicalModule,
+  PersonalModule,
   ProfessionalProfileModule,
   ShoppingModule,
 } from './';
@@ -26,6 +27,7 @@ import {
     LikesAndDislikesModule,
     LocationModule,
     MedicalModule,
+    PersonalModule,
     ProfessionalProfileModule,
     ShoppingModule,
   ],

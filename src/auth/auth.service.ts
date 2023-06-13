@@ -44,4 +44,16 @@ export class AuthService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async stepManager(step, loginAuthDto: string) {
+    try {
+      // const { data } = await this.httpService.axiosRef.post<Promise<string>>(
+      //   `${this.configService.get<string>('AUTHMICRO-SERVICE')}/login`,
+      //   loginAuthDto,
+      // );
+      // return data;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

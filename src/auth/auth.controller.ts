@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto, SignupAuthDto } from './dto';
 
@@ -14,5 +14,10 @@ export class AuthController {
   @Post('login')
   login(@Body() loginAuthDto: LoginAuthDto) {
     return this.authService.login(loginAuthDto);
+  }
+
+  @Post('step/:num')
+  stepForm(@Param('num') step: number, @Body() data: string) {
+    return this.authService.stepManager(step, data);
   }
 }
