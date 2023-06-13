@@ -36,11 +36,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(step: number, dto: any) {
+  stepFollower(step: number, dto: CreateUserDto) {
     const { service } = stepService[step - 1];
     console.log('got into the stepFollower');
+    console.log(service);
 
-    this[service].findAll();
+    this[service].create();
   }
 
   findAll() {

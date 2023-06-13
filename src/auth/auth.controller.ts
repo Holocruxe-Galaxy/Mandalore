@@ -17,7 +17,8 @@ export class AuthController {
   }
 
   @Post('step/:num')
-  stepForm(@Param('num') step: number, @Body() data: string) {
-    return this.authService.stepManager(step, data);
+  async stepForm(@Param('num') step: number, @Body() data: LoginAuthDto) {
+    const pancho = 'hola';
+    return this.authService.stepManager(step, pancho);
   }
 }

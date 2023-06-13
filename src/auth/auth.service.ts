@@ -49,7 +49,7 @@ export class AuthService {
     }
   }
 
-  async stepManager(step: number, dto: string) {
+  async stepManager(step: number, dto: any) {
     try {
       return this.userService.stepFollower(step, dto);
     } catch (error) {
