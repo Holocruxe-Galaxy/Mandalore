@@ -5,7 +5,7 @@ import { UpdatePersonalDto } from './dto/update-personal.dto';
 @Injectable()
 export class PersonalService {
   create(createPersonalDto: CreatePersonalDto) {
-    return 'This action adds a new personal';
+    return console.log('This action adds a new personal');
   }
 
   findAll() {

@@ -6,6 +6,5 @@ interface StepData {
 }
 
 export interface Step {
-  1: StepData;
-  2: StepData;
+  [key: number]: StepData;
 }

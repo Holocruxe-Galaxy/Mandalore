@@ -1,7 +1,7 @@
 import { Step } from 'src/auth/interfaces';
 import { CreateContactInfoDto, CreatePersonalDto } from 'src/auth/dto';
 
-export const stepData: Step = {
+export const stepData = {
   1: { name: 'contactInfo', dto: CreateContactInfoDto },
   2: { name: 'personal', dto: CreatePersonalDto },
 } as const;

@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  forwardRef,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
@@ -14,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Group, User } from './entities';
 import { ContactInfoService, PersonalService } from './services';
 
-import { StepDataValues } from 'src/auth/types';
+import { StepDataValues, stepData } from 'src/auth/types';
 import { StepsDto } from 'src/auth/dto';
 
 @Injectable()
@@ -46,15 +41,11 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(service: StepDataValues, dto: StepsDto) {
+  stepFollower(service: StepDataValues, dto: StepsDto, step: number) {
     try {
       const dtoData = dto[service.name];
-      if (!(dtoData instanceof service.dto))
-        throw new InternalServerErrorException(
-          'Dto data is not compatible with service. Please inform the developer.',
-        );
 
-      this[`${service}Service`].create(dtoData);
+      return this[`${stepData[step].name}Service`].create(dtoData);
     } catch (error) {
       console.log(error);
     }
