@@ -11,8 +11,8 @@ export class CreatePersonalDto {
   @IsIn(gender)
   gender: string;
 
-  @IsDate()
-  birthdate: string;
+  // @IsDate()
+  // birthdate: string;
 
   @IsIn(civilStatus)
   civilStatus: string;

@@ -1,1 +1,1 @@
-export * from './step-data.type';
+export * from './step/';

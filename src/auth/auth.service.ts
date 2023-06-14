@@ -53,10 +53,10 @@ export class AuthService {
 
   async stepManager(step: StepDataKeys, stepDto: StepsDto) {
     const data = stepData[step];
-    if (!stepDto.hasOwnProperty(data))
+    if (!stepDto.hasOwnProperty(data.name))
       throw new BadRequestException(
-        'Step number is uncompatible with property',
+        'Step number is incompatible with property',
       );
-    return this.userService.stepFollower(step, data);
+    return this.userService.stepFollower(data, stepDto);
   }
 }

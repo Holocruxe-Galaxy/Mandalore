@@ -1,11 +1,21 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+
 import { EntityManager, Repository } from 'typeorm';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+
 import { Group, User } from './entities';
 import { ContactInfoService, PersonalService } from './services';
-import { StepDataValues, stepData } from 'src/auth/types';
+
+import { StepDataValues } from 'src/auth/types';
+import { StepsDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {
@@ -36,9 +46,13 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(step: number, service: StepDataValues) {
+  stepFollower(service: StepDataValues, dto: StepsDto) {
     try {
-      this[`${service}Service`].findAll();
+      const dtoData = dto[service.name];
+      if (!(dtoData instanceof service.dto))
+        throw new InternalServerErrorException('User ');
+
+      this[`${service}Service`].create(dtoData);
     } catch (error) {
       console.log(error);
     }
