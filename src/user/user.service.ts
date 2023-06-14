@@ -50,7 +50,9 @@ export class UserService {
     try {
       const dtoData = dto[service.name];
       if (!(dtoData instanceof service.dto))
-        throw new InternalServerErrorException('User ');
+        throw new InternalServerErrorException(
+          'Dto data is not compatible with service. Please inform the developer.',
+        );
 
       this[`${service}Service`].create(dtoData);
     } catch (error) {
