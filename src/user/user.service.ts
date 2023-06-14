@@ -41,11 +41,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(service: StepDataValues, dto: StepsDto, step: number) {
+  stepFollower(service: StepDataValues, dto: StepsDto) {
     try {
       const dtoData = dto[service.name];
+      const serviceInstance = this[`${service.name}Service`] as any;
 
-      return this[`${stepData[step].name}Service`].create(dtoData);
+      return serviceInstance.create(dtoData);
     } catch (error) {
       console.log(error);
     }
