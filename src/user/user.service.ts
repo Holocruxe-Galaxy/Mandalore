@@ -4,8 +4,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Group, User } from './entities';
-import { stepService } from './types';
 import { ContactInfoService, PersonalService } from './services';
+import { StepDataValues, stepData } from 'src/auth/types';
 
 @Injectable()
 export class UserService {
@@ -36,12 +36,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(step: number, dto: CreateUserDto) {
-    const { service } = stepService[step - 1];
-    console.log('got into the stepFollower');
-    console.log(service);
-
-    this[service].create();
+  stepFollower(step: number, service: StepDataValues) {
+    try {
+      this[`${service}Service`].findAll();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   findAll() {

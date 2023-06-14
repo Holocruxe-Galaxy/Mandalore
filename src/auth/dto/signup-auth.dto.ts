@@ -4,15 +4,15 @@ export class SignupAuthDto {
   @IsString()
   username: string;
 
-  // @IsString()
-  // name: string;
+  @IsString()
+  name: string;
 
-  // @IsString()
-  // lastname: string;
+  @IsString()
+  lastname: string;
 
-  // @IsEmail()
-  // email: string;
+  @IsEmail()
+  email: string;
 
-  // @IsString()
-  // birthdate: string;
+  @IsString()
+  birthdate: string;
 }
