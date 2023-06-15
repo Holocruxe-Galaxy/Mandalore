@@ -1,6 +1,8 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginAuthDto, SignupAuthDto } from './dto';
+import { LoginAuthDto, SignupAuthDto, StepsDto } from './dto';
+import { StepDataKeys } from './types';
+import { ParseStep } from './pipes/parse-step.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +19,10 @@ export class AuthController {
   }
 
   @Post('step/:num')
-  stepForm(@Param('num') step: number, @Body() data: string) {
+  async stepForm(
+    @Param('num', ParseStep) step: StepDataKeys,
+    @Body() data: StepsDto,
+  ) {
     return this.authService.stepManager(step, data);
   }
 }

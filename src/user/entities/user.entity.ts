@@ -5,7 +5,7 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { Group, LikesAndDislikes, ProfessionalProfile } from './';
+import { Group, LikesAndDislikes, Personal, ProfessionalProfile } from './';
 import { StatusType } from '../types';
 
 @Entity()
@@ -21,6 +21,12 @@ export class User {
 
   @Column()
   account: string;
+
+  @OneToOne(() => Personal, (personal) => personal.user, {
+    cascade: true,
+    nullable: true,
+  })
+  personal: Personal;
 
   @OneToMany(() => Group, (group) => group.user)
   group: Group[];
