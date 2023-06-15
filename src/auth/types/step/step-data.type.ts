@@ -2,8 +2,16 @@ import { Step } from 'src/auth/interfaces';
 import { CreateContactInfoDto, CreatePersonalDto } from 'src/auth/dto';
 
 export const stepData: Step = {
-  1: { name: 'contactInfo', dto: CreateContactInfoDto },
-  2: { name: 'personal', dto: CreatePersonalDto },
+  1: {
+    name: 'contactInfo',
+    dto: CreateContactInfoDto,
+    stepService: 'contactInfoService',
+  },
+  2: {
+    name: 'personal',
+    dto: CreatePersonalDto,
+    stepService: 'personalService',
+  },
 } as const;
 
 export type StepDataKeys = keyof typeof stepData;

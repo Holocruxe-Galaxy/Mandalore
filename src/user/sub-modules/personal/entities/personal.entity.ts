@@ -17,11 +17,11 @@ export class Personal {
   lastName: string;
 
   @Column()
-  gender: GenderType;
+  gender: string;
 
   @Column()
   birthdate: string;
 
   @Column()
-  civilStatus: CivilStatusType;
+  civilStatus: string;
 }

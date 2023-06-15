@@ -57,6 +57,6 @@ export class AuthService {
       throw new BadRequestException(
         'Step number is incompatible with property',
       );
-    return this.userService.stepFollower(data, stepDto);
+    return await this.userService.stepFollower(data, stepDto);
   }
 }

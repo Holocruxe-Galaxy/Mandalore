@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Group, User } from './entities';
 import { ContactInfoService, PersonalService } from './services';
 
-import { StepDataValues, stepData } from 'src/auth/types';
+import { StepDataValues } from 'src/auth/types';
 import { StepsDto } from 'src/auth/dto';
 
 @Injectable()
@@ -41,12 +41,12 @@ export class UserService {
     return 'This action adds a new user';
   }
 
-  stepFollower(service: StepDataValues, dto: StepsDto) {
+  async stepFollower(service: StepDataValues, dto: StepsDto) {
     try {
-      const dtoData = dto[service.name];
-      const serviceInstance = this[`${service.name}Service`] as any;
+      const dtoData = dto[service.name] as any;
+      const serviceInstance = this[service.stepService];
 
-      return serviceInstance.create(dtoData);
+      return await serviceInstance.create(dtoData);
     } catch (error) {
       console.log(error);
     }
