@@ -25,7 +25,6 @@ import {
     TypeOrmModule.forFeature([
       Group,
       LikesAndDislikes,
-      Personal,
       ProfessionalProfile,
       User,
     ]),
