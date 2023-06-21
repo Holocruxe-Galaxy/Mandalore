@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -9,7 +10,9 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { Auth } from './entities/auth.entity';
-import { LoginAuthDto, SignupAuthDto } from './dto';
+import { LoginAuthDto, SignupAuthDto, StepsDto } from './dto';
+import { UserService } from 'src/user/user.service';
+import { StepDataKeys, stepData } from './types';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +22,9 @@ export class AuthService {
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
     private readonly httpService: HttpService,
+
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService,
   ) {}
 
   async register(signupAuthDto: SignupAuthDto) {
@@ -43,5 +49,14 @@ export class AuthService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async stepManager(step: StepDataKeys, stepDto: StepsDto) {
+    const data = stepData[step];
+    if (!stepDto.hasOwnProperty(data.name))
+      throw new BadRequestException(
+        'Step number is incompatible with property',
+      );
+    return await this.userService.stepFollower(data, stepDto);
   }
 }

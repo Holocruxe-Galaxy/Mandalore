@@ -1,59 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+
+import { EntityManager, Repository } from 'typeorm';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+
 import { Group, User } from './entities';
-import { People } from './interfaces';
+import { ContactInfoService, PersonalService } from './services';
+
+import { StepDataValues } from 'src/auth/types';
+import { StepsDto } from 'src/auth/dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
+    @InjectEntityManager()
+    private entityManager: EntityManager,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
+
+    @Inject(forwardRef(() => ContactInfoService))
+    private contactInfoService: ContactInfoService,
+    @Inject(forwardRef(() => PersonalService))
+    private personalService: PersonalService,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const username = createUserDto.username;
+    const user = this.userRepository.create({ username: 'emi', group: [] });
 
-    this.userRepository.create();
-    const user = this.userRepository.create({
-      group: [
-        this.groupRepository.create({
-          name: createUserDto.group,
-          people: [],
-        }),
-        this.groupRepository.create({
-          name: 'fulbo',
-          people: [],
-        }),
-      ],
-      username,
-    });
+    // const group = this.groupRepository.create({
+    //   name: 'friends',
+    //   people: [],
+    //   user: { id: '' },
+    // });
 
-    const juan: People = {
-      name: 'Juan',
-    };
-
-    const carlos: People = {
-      name: 'Carlos',
-      contactLink: 'http://carlos.com',
-    };
-
-    await this.userRepository.save(user);
-    const peopleGroup = await this.groupRepository.find({
-      relations: ['user'],
-      where: { user: { id: user.id } },
-    });
-    peopleGroup[0].people.push(juan);
-    peopleGroup[1].people.push(carlos);
-    peopleGroup.map(async (foo) => {
-      await this.groupRepository.update(foo.id, {
-        people: foo.people,
-      });
-    });
+    // await this.groupRepository.save(group);
     return 'This action adds a new user';
+  }
+
+  async stepFollower(service: StepDataValues, dto: StepsDto) {
+    try {
+      const dtoData = dto[service.name] as any;
+      const serviceInstance = this[service.stepService];
+
+      return await serviceInstance.create(dtoData);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   findAll() {
