@@ -28,24 +28,17 @@ export class UserService {
     @Inject(forwardRef(() => PersonalService))
     private personalService: PersonalService,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create({ username: 'emi', group: [] });
-
-    // const group = this.groupRepository.create({
-    //   name: 'friends',
-    //   people: [],
-    //   user: { id: '' },
-    // });
-
-    // await this.groupRepository.save(group);
-    return 'This action adds a new user';
+    const user = this.userRepository.create(createUserDto);
+    await this.userRepository.save(user);
+    return 'The user has been created successfully';
   }
 
   async stepFollower(service: StepDataValues, dto: StepsDto) {
     try {
       const dtoData = dto[service.name] as any;
       const serviceInstance = this[service.stepService];
-
       return await serviceInstance.create(dtoData);
     } catch (error) {
       console.log(error);
