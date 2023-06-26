@@ -33,6 +33,8 @@ export class AuthService {
         `${this.configService.get<string>('AUTHMICRO-SERVICE')}/register`,
         signupAuthDto,
       );
+
+      await this.userService.create({ email: signupAuthDto.email });
       return data;
     } catch (error) {
       throw new InternalServerErrorException(error);
