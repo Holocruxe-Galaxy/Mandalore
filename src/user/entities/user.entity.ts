@@ -7,20 +7,18 @@ import {
 } from 'typeorm';
 import { Group, LikesAndDislikes, Personal, ProfessionalProfile } from './';
 import { StatusType } from '../types';
+import { ContactInfo } from '../sub-modules/contact-info/entities/contact-info.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  username: string;
+  @Column({ unique: true })
+  email: string;
 
-  @Column()
+  @Column({ default: 'PENDING' })
   status: StatusType;
-
-  @Column()
-  account: string;
 
   @OneToOne(() => Personal, (personal) => personal.user, {
     cascade: true,
@@ -50,4 +48,10 @@ export class User {
     },
   )
   likesAndDislikes: LikesAndDislikes[];
+
+  @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {
+    cascade: true,
+    nullable: true,
+  })
+  contactInfo: ContactInfo;
 }
