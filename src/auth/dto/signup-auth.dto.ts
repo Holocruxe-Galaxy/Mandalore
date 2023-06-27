@@ -12,7 +12,4 @@ export class SignupAuthDto {
 
   @IsEmail()
   email: string;
-
-  @IsString()
-  birthdate: string;
 }
