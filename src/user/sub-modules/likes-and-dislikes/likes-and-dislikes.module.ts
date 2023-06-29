@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { LikesAndDislikesService } from './likes-and-dislikes.service';
 import { LikesAndDislikesController } from './likes-and-dislikes.controller';
-import { Activity, Interest, LikesAndDislikes } from './entities';
+import { Activity, Interest, LikesAndDislikes } from './schemas';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Activity, Interest, LikesAndDislikes])],
+  imports: [],
   controllers: [LikesAndDislikesController],
   providers: [LikesAndDislikesService],
 })

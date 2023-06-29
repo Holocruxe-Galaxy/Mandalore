@@ -5,11 +5,9 @@ import {
   InternalServerErrorException,
   forwardRef,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { Repository } from 'typeorm';
-import { Auth } from './entities/auth.entity';
+
 import { LoginAuthDto, SignupAuthDto, StepsDto } from './dto';
 import { UserService } from 'src/user/user.service';
 import { StepDataKeys, stepData } from './types';
@@ -17,8 +15,6 @@ import { StepDataKeys, stepData } from './types';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Auth)
-    private authRepository: Repository<Auth>,
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
     private readonly httpService: HttpService,

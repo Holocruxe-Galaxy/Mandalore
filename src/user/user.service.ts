@@ -1,12 +1,11 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-
-import { EntityManager, Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-import { Group, User } from './entities';
+import { User } from './schemas';
 import { ContactInfoService, PersonalService } from './services';
 
 import { StepDataValues } from 'src/auth/types';
@@ -15,13 +14,8 @@ import { StepsDto } from 'src/auth/dto';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-
-    @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<typeof User>,
 
     @Inject(forwardRef(() => ContactInfoService))
     private contactInfoService: ContactInfoService,
@@ -30,8 +24,8 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
-    await this.userRepository.save(user);
+    const user = await this.userModel.create(createUserDto);
+    console.log(user);
     return 'The user has been created successfully';
   }
 
@@ -46,7 +40,7 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userModel.find();
   }
 
   findOne(id: number) {
