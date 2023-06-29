@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { People } from '../interfaces';
 
 @Schema()
@@ -10,3 +10,5 @@ export class Group extends Document {
   @Prop()
   people: People[];
 }
+
+export const GroupSchema = SchemaFactory.createForClass(Group);

@@ -1,37 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { Educational, Job, Professional } from './';
 
-@Entity()
+@Schema()
 export class Institution {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
+  @Prop()
   name: string;
 
-  @Column()
+  @Prop()
   title: string;
 
-  @Column()
+  @Prop()
   startingDate: string;
 
-  @Column()
+  @Prop()
   finishingDate: string;
 
-  @ManyToOne(
-    () => Educational,
-    (educational) => educational.school || educational.course,
-    { nullable: true },
-  )
+  @Prop()
   educational: Educational;
 
-  @ManyToOne(() => Job, (job) => job.previousJob || job.currentJob, {
-    nullable: true,
-  })
-  job: Educational;
+  // @Prop()
+  // job: Educational;
 
-  @ManyToOne(() => Professional, (professional) => professional.internship, {
-    nullable: true,
-  })
-  professional: Professional;
+  // @Prop()
+  // professional: Professional;
 }

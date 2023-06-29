@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { UpdatePersonalDto } from './dto/update-personal.dto';
-import { Personal } from './entities';
+import { Personal } from './schemas';
 
 @Injectable()
 export class PersonalService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(Personal)
-    private personalRepository: Repository<Personal>,
+    @InjectModel(Personal.name)
+    private readonly personalModel: Model<typeof Personal>,
   ) {}
   async create(createPersonalDto: CreatePersonalDto) {
-    const personal = this.personalRepository.create(createPersonalDto);
-    await this.personalRepository.save(personal);
+    await this.personalModel.create(createPersonalDto);
+
     return 'The data has been saved properly';
   }
 

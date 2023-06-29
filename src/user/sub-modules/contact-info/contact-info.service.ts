@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { CreateContactInfoDto } from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
-import { ContactInfo } from './entities/contact-info.entity';
+import { ContactInfo } from './schemas/contact-info.schema';
 
 @Injectable()
 export class ContactInfoService {

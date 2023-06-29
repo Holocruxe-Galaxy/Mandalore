@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { PersonalService } from './personal.service';
 import { PersonalController } from './personal.controller';
-import { Personal } from './entities';
+import { Personal, PersonalSchema } from './schemas';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Personal])],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Personal.name,
+        schema: PersonalSchema,
+      },
+    ]),
+  ],
   controllers: [PersonalController],
   providers: [PersonalService],
   exports: [PersonalService],
