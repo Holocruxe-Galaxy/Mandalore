@@ -5,7 +5,7 @@ export class CreateContactInfoDto {
   @IsEmail()
   altEmail: string;
 
-  @IsString()
+  @IsPhoneNumber()
   phone: string;
 
   @IsString()

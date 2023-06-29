@@ -1,57 +1,47 @@
+import { Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, SchemaTypes } from 'mongoose';
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
-import { Group, LikesAndDislikes, Personal, ProfessionalProfile } from './';
+  ContactInfo,
+  Group,
+  LikesAndDislikes,
+  Personal,
+  ProfessionalProfile,
+} from './';
 import { StatusType } from '../types';
-import { ContactInfo } from '../sub-modules/contact-info/entities/contact-info.entity';
+import { prop } from '@typegoose/typegoose';
 
-@Entity()
+@Schema()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+  @prop({ unique: true })
   email: string;
 
-  @Column({ default: 'PENDING' })
+  @prop({ default: 'PENDING' })
   status: StatusType;
 
-  @OneToOne(() => Personal, (personal) => personal.user, {
-    cascade: true,
-    nullable: true,
+  @prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: 'contactInfo' }],
+  })
+  contactInfo: ContactInfo;
+
+  @prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: 'group' }],
+  })
+  group: [Group];
+
+  @prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: 'personal' }],
   })
   personal: Personal;
 
-  @OneToMany(() => Group, (group) => group.user)
-  group: Group[];
-
-  @OneToOne(
-    () => ProfessionalProfile,
-    (professionalProfile) => professionalProfile.user,
-    {
-      cascade: true,
-      nullable: true,
-    },
-  )
+  @prop({
+    type: [{ type: SchemaTypes, ref: 'professionalProfile' }],
+  })
   professionalProfile: ProfessionalProfile;
 
-  @OneToMany(
-    () => LikesAndDislikes,
-    (likesAndDislikes) => likesAndDislikes.user,
-    {
-      cascade: true,
-      nullable: true,
-    },
-  )
-  likesAndDislikes: LikesAndDislikes[];
-
-  @OneToOne(() => ContactInfo, (contactInfo) => contactInfo.user, {
-    cascade: true,
-    nullable: true,
+  @prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
   })
-  contactInfo: ContactInfo;
+  likesAndDislikes: [LikesAndDislikes];
 }
+
+export const UserSchema = SchemaFactory.createForClass(User);

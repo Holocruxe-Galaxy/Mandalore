@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreateContactInfoDto } from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
 import { ContactInfo } from './entities/contact-info.entity';
@@ -8,14 +9,12 @@ import { ContactInfo } from './entities/contact-info.entity';
 @Injectable()
 export class ContactInfoService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(ContactInfo)
-    private contactInfoRepository: Repository<ContactInfo>,
+    @InjectModel(ContactInfo.name)
+    private contactInfoModel: Model<ContactInfo>,
   ) {}
   async create(createContactInfoDto: CreateContactInfoDto) {
-    const contactInfo = this.contactInfoRepository.create(createContactInfoDto);
-    await this.contactInfoRepository.save(contactInfo);
+    await this.contactInfoModel.create(createContactInfoDto);
+
     return 'The data has been saved properly';
   }
 

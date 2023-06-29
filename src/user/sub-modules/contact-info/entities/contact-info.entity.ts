@@ -1,23 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, Column } from 'typeorm';
-import { User } from 'src/user/entities';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-@Entity()
-export class ContactInfo {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @OneToOne(() => User, (user) => user.personal)
-  user: User;
-
-  @Column()
+@Schema()
+export class ContactInfo extends Document {
+  @Prop()
   email: string;
 
-  @Column()
+  @Prop()
   altEmail: string;
 
-  @Column()
+  @Prop()
   phone: string;
 
-  @Column()
+  @Prop()
   zipCode: string;
 }
+
+export const ContactInfoSchema = SchemaFactory.createForClass(ContactInfo);
