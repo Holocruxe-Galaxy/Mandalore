@@ -15,7 +15,7 @@ import { StepsDto } from 'src/auth/dto';
 export class UserService {
   constructor(
     @InjectModel(User.name)
-    private readonly userModel: Model<typeof User>,
+    private readonly userModel: Model<User>,
 
     @Inject(forwardRef(() => ContactInfoService))
     private contactInfoService: ContactInfoService,
@@ -25,6 +25,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.userModel.create(createUserDto);
+
     console.log(user);
     return 'The user has been created successfully';
   }

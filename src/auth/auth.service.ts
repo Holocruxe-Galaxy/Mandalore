@@ -26,7 +26,7 @@ export class AuthService {
   async register(signupAuthDto: SignupAuthDto) {
     try {
       const { data } = await this.httpService.axiosRef.post<Promise<string>>(
-        `${this.configService.get<string>('AUTHMICRO-SERVICE')}/register`,
+        `${this.configService.get<string>('AUTHMICRO_SERVICE')}/register`,
         signupAuthDto,
       );
 
@@ -40,7 +40,7 @@ export class AuthService {
   async login(loginAuthDto: LoginAuthDto) {
     try {
       const { data } = await this.httpService.axiosRef.post<Promise<string>>(
-        `${this.configService.get<string>('AUTHMICRO-SERVICE')}/login`,
+        `${this.configService.get<string>('AUTHMICRO_SERVICE')}/login`,
         loginAuthDto,
       );
       return data;
