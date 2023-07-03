@@ -1,6 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { FormService } from './form.service';
-import { StepType } from './types';
 import { StepsDto } from './dto';
 
 @Controller()

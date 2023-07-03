@@ -2,7 +2,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { StepsDto } from './dto/steps.dto';
 
 import { UserService } from '../user.service';
-import { ContactInfoService, PersonalService } from '../services';
+
 import { StepType } from './types';
 import { User } from '../schemas';
 
