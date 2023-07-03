@@ -1,26 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFormDto } from './dto/create-form.dto';
-import { UpdateFormDto } from './dto/update-form.dto';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { StepsDto } from './dto/steps.dto';
+
+import { UserService } from '../user.service';
+
+import { StepType } from './types';
+import { User } from '../schemas';
 
 @Injectable()
 export class FormService {
-  create(createFormDto: CreateFormDto) {
-    return 'This action adds a new form';
-  }
+  constructor(
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService,
+  ) {}
 
-  findAll() {
-    return `This action returns all form`;
-  }
+  async stepManager(stepsDto: StepsDto) {
+    const steps: Promise<User>[] = [];
 
-  findOne(id: number) {
-    return `This action returns a #${id} form`;
-  }
+    for (const step in stepsDto) {
+      steps.push(
+        this.userService.stepFollower(step as StepType, stepsDto[step]),
+      );
+    }
+    const results = await Promise.all(steps);
 
-  update(id: number, updateFormDto: UpdateFormDto) {
-    return `This action updates a #${id} form`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} form`;
+    return results.pop();
   }
 }

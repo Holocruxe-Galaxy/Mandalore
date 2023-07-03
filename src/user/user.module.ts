@@ -17,6 +17,9 @@ import {
 import { MongooseModule } from '@nestjs/mongoose';
 import { routes } from './routes';
 import { UserSchema } from './schemas/user.schema';
+import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
+import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -27,6 +30,8 @@ import { UserSchema } from './schemas/user.schema';
       },
     ]),
     forwardRef(() => ContactInfoModule),
+    ConfigModule,
+    HttpModule,
     GroupModule,
     LikesAndDislikesModule,
     LocationModule,
@@ -38,7 +43,7 @@ import { UserSchema } from './schemas/user.schema';
     RouterModule.register(routes),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, LoggerMiddleware],
   exports: [UserService],
 })
 export class UserModule {}

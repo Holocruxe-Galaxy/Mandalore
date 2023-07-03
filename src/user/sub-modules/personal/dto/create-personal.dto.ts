@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsIn, IsString } from 'class-validator';
+import { IsDate, IsIn, IsString } from 'class-validator';
 import { civilStatus, gender } from '../types';
 
 export class CreatePersonalDto {
@@ -11,7 +11,7 @@ export class CreatePersonalDto {
   @IsIn(gender)
   gender: string;
 
-  @IsDate()
+  @IsString()
   birthdate: string;
 
   @IsIn(civilStatus)

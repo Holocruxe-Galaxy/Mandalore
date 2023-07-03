@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 
 import { CreateContactInfoDto } from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
@@ -12,10 +12,10 @@ export class ContactInfoService {
     @InjectModel(ContactInfo.name)
     private contactInfoModel: Model<ContactInfo>,
   ) {}
-  async create(createContactInfoDto: CreateContactInfoDto) {
-    await this.contactInfoModel.create(createContactInfoDto);
+  async create(createContactInfoDto: CreateContactInfoDto): Promise<ObjectId> {
+    const { _id } = await this.contactInfoModel.create(createContactInfoDto);
 
-    return 'The data has been saved properly';
+    return _id;
   }
 
   findAll() {
