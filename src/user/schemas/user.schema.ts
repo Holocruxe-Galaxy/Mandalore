@@ -17,10 +17,10 @@ export class User extends Document {
   @Prop({ default: 'PENDING' })
   status: StatusType;
 
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: ContactInfo.name }],
-  // })
-  // contactInfo: ContactInfo;
+  @Prop({
+    type: { type: SchemaTypes.ObjectId, ref: 'contactInfo' },
+  })
+  contactInfo: ContactInfo;
 
   // @Prop({
   //   type: [{ type: SchemaTypes.ObjectId, ref: Group.name }],
@@ -28,7 +28,7 @@ export class User extends Document {
   // group: [Group];
 
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: 'personal' }],
+    type: { type: SchemaTypes.ObjectId, ref: 'personal' },
   })
   personal: Personal;
 
@@ -41,6 +41,9 @@ export class User extends Document {
   //   type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
   // })
   // likesAndDislikes: [LikesAndDislikes];
+
+  @Prop({ default: 0 })
+  step: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

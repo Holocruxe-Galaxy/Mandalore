@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { UpdatePersonalDto } from './dto/update-personal.dto';
@@ -10,12 +10,12 @@ import { Personal } from './schemas';
 export class PersonalService {
   constructor(
     @InjectModel(Personal.name)
-    private readonly personalModel: Model<typeof Personal>,
+    private readonly personalModel: Model<Personal>,
   ) {}
-  async create(createPersonalDto: CreatePersonalDto) {
-    await this.personalModel.create(createPersonalDto);
+  async create(createPersonalDto: CreatePersonalDto): Promise<ObjectId> {
+    const { _id } = await this.personalModel.create(createPersonalDto);
 
-    return 'The data has been saved properly';
+    return _id;
   }
 
   findAll() {
