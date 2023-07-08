@@ -9,7 +9,7 @@ import {
   Scope,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller({ path: 'user', scope: Scope.REQUEST })
@@ -19,13 +19,21 @@ export class UserController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create() {
+    return this.userService.create();
   }
 
-  @Get()
+  @Get('all')
   findAll() {
+    // Email, Role, Plan, Status
     return this.userService.findAll();
+  }
+
+  @Get('data')
+  find() {
+    // Should return an object with the properties:
+    // Status, Role, Country
+    return this.userService.findOne();
   }
 
   @Patch(':id')

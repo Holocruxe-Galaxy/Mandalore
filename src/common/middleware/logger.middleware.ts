@@ -20,8 +20,8 @@ export class LoggerMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: RequestWidhUser, res: Response, next: NextFunction) {
-    const { authorization } = req.headers;
     try {
+      const { authorization } = req.headers;
       const { data } = await this.httpService.axiosRef.post<UserResponseKey>(
         `${this.configService.get<string>('AUTHMICRO_SERVICE')}/users/verify`,
         null,
