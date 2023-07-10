@@ -23,7 +23,7 @@ import {
   CreateLocationDto,
   CreatePersonalDto,
 } from './dto';
-import { Active, Pending, Select } from './interfaces';
+import { Complete, Pending, Select } from './interfaces';
 import { select } from './types';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -87,9 +87,7 @@ export class UserService {
   async findOne() {
     try {
       const email = this.request.user;
-      const user: User = await this.userModel
-        .findOne(email)
-        .populate('location');
+      const user: User = await this.userModel.findOne(email);
 
       return this.dataPicker(user.toObject());
     } catch (error) {
@@ -97,9 +95,9 @@ export class UserService {
     }
   }
 
-  private dataPicker({ role, status, ...user }: User): Pending | Active {
+  private dataPicker({ role, status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { role, status, step: user.step };
-    else if (status === 'ACTIVE') {
+    else if (status === 'COMPLETE') {
       const { country } = user.location[0];
 
       return { role, status, country };

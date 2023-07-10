@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongoose';
-import { PlanType, RoleType, StatusType } from '../types';
+import { PlanType, RoleType, StatusType } from 'src/user/types';
 
 export interface Select {
   _id: ObjectId;
