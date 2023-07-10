@@ -26,8 +26,8 @@ export class ContactInfoService {
     return `This action returns a #${id} contactInfo`;
   }
 
-  update(id: number, updateContactInfoDto: UpdateContactInfoDto) {
-    return `This action updates a #${id} contactInfo`;
+  update(id: ObjectId, data: UpdateContactInfoDto) {
+    return `This action updates a contactInfo`;
   }
 
   remove(id: number) {

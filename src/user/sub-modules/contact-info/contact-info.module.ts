@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ContactInfoService } from './contact-info.service';
-import { ContactInfoController } from './contact-info.controller';
 import { ContactInfo, ContactInfoSchema } from './schemas/contact-info.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -13,7 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       },
     ]),
   ],
-  controllers: [ContactInfoController],
+  controllers: [],
   providers: [ContactInfoService],
   exports: [ContactInfoService],
 })
