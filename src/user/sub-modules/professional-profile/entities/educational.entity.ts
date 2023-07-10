@@ -1,20 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, OneToMany } from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { Institution, ProfessionalProfile } from '.';
 
-@Entity()
+@Schema()
 export class Educational {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @OneToOne(
-    () => ProfessionalProfile,
-    (professionalProfile) => professionalProfile.educational,
-  )
-  professionalProfile: ProfessionalProfile;
-
-  @OneToMany(() => Institution, (institution) => institution.educational)
-  school: Institution;
-
-  @OneToMany(() => Institution, (institution) => institution.educational)
-  course: Institution;
+  // @Prop()
+  // professionalProfile: ProfessionalProfile;
+  // @Prop()
+  // school: Institution;
+  // @Prop()
+  // course: Institution;
 }

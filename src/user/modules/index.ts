@@ -1,4 +1,5 @@
 export { ContactInfoModule } from '../sub-modules/contact-info/contact-info.module';
+export { FormModule } from './../form/form.module';
 export { GroupModule } from '../sub-modules/group/group.module';
 export { LikesAndDislikesModule } from '../sub-modules/likes-and-dislikes/likes-and-dislikes.module';
 export { LocationModule } from '../sub-modules/location/location.module';

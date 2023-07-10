@@ -1,69 +1,118 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  Scope,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, ObjectId } from 'mongoose';
 
-import { EntityManager, Repository } from 'typeorm';
+import { User } from './schemas';
+import {
+  ContactInfoService,
+  LocationService,
+  PersonalService,
+} from './services';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { RequestWidhUser } from 'src/common/interfaces';
+import { DtoType, StepType } from './form/types';
+import {
+  CreateContactInfoDto,
+  CreateLocationDto,
+  CreatePersonalDto,
+} from './dto';
+import { Active, Pending, Select } from './interfaces';
+import { select } from './types';
 
-import { Group, User } from './entities';
-import { ContactInfoService, PersonalService } from './services';
-
-import { StepDataValues } from 'src/auth/types';
-import { StepsDto } from 'src/auth/dto';
-
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-
-    @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
 
     @Inject(forwardRef(() => ContactInfoService))
     private contactInfoService: ContactInfoService,
     @Inject(forwardRef(() => PersonalService))
     private personalService: PersonalService,
+    @Inject(forwardRef(() => LocationService))
+    private locationService: LocationService,
+
+    @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
-  async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create({ username: 'emi', group: [] });
 
-    // const group = this.groupRepository.create({
-    //   name: 'friends',
-    //   people: [],
-    //   user: { id: '' },
-    // });
+  async create() {
+    const email = this.request.user;
+    await this.userModel.create(email);
 
-    // await this.groupRepository.save(group);
-    return 'This action adds a new user';
+    return 'The user has been created successfully';
   }
 
-  async stepFollower(service: StepDataValues, dto: StepsDto) {
+  async stepFollower(step: StepType, dto: DtoType): Promise<User> {
     try {
-      const dtoData = dto[service.name] as any;
-      const serviceInstance = this[service.stepService];
+      const data =
+        step === 'contactInfo'
+          ? await this.contactInfoService.create(dto as CreateContactInfoDto)
+          : step === 'location'
+          ? await this.locationService.create(dto as CreateLocationDto)
+          : step === 'personal'
+          ? await this.personalService.create(dto as CreatePersonalDto)
+          : undefined;
 
-      return await serviceInstance.create(dtoData);
+      if (data) return this.addFormProp(step, data);
+      return;
     } catch (error) {
       console.log(error);
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  private async addFormProp(prop: StepType, dto: ObjectId) {
+    const email = this.request.user;
+
+    return await this.userModel.findOneAndUpdate(
+      email,
+      {
+        [prop]: dto,
+        $inc: { step: +1 },
+      },
+      { new: true },
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll(): Promise<Select[]> {
+    return await this.userModel.find().select(select);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
-    return `This action updates a #${id} user`;
+  async findOne() {
+    try {
+      const email = this.request.user;
+      const user: User = await this.userModel
+        .findOne(email)
+        .populate('location');
+
+      return this.dataPicker(user.toObject());
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
+
+  private dataPicker({ role, status, ...user }: User): Pending | Active {
+    if (status === 'PENDING') return { role, status, step: user.step };
+    else if (status === 'ACTIVE') {
+      const { country } = user.location[0];
+
+      return { role, status, country };
+    }
+  }
+
+  // async update(service: StepDataValues, updateUserDto: StepsDto) {
+  //   const dtoData = service.name;
+  //   const email = this.request.user;
+  //   console.log({ [dtoData]: updateUserDto });
+  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
+  //   // return `This action updates a #${id} user`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
