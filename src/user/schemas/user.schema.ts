@@ -4,10 +4,11 @@ import {
   ContactInfo,
   Group,
   LikesAndDislikes,
+  Location,
   Personal,
   ProfessionalProfile,
 } from '.';
-import { StatusType } from '../types';
+import { PlanType, RoleType, StatusType } from '../types';
 
 @Schema()
 export class User extends Document {
@@ -16,6 +17,15 @@ export class User extends Document {
 
   @Prop({ default: 'PENDING' })
   status: StatusType;
+
+  @Prop({ default: 0 })
+  step: number;
+
+  @Prop({ default: 'USER' })
+  role: RoleType;
+
+  @Prop({ default: 'FREE' })
+  plan: PlanType;
 
   @Prop({
     type: { type: SchemaTypes.ObjectId, ref: 'contactInfo' },
@@ -27,6 +37,16 @@ export class User extends Document {
   // })
   // group: [Group];
 
+  // @Prop({
+  //   type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
+  // })
+  // likesAndDislikes: [LikesAndDislikes];
+
+  @Prop({
+    type: [{ type: SchemaTypes.ObjectId, ref: 'Location' }],
+  })
+  location: [Location];
+
   @Prop({
     type: { type: SchemaTypes.ObjectId, ref: 'personal' },
   })
@@ -36,14 +56,6 @@ export class User extends Document {
   //   type: [{ type: SchemaTypes, ref: 'professionalProfile' }],
   // })
   // professionalProfile: ProfessionalProfile;
-
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
-  // })
-  // likesAndDislikes: [LikesAndDislikes];
-
-  @Prop({ default: 0 })
-  step: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

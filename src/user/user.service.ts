@@ -1,16 +1,30 @@
-import { Inject, Injectable, forwardRef, Scope } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  Scope,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 
-import { CreateUserDto } from './dto/create-user.dto';
-
 import { User } from './schemas';
-import { ContactInfoService, PersonalService } from './services';
+import {
+  ContactInfoService,
+  LocationService,
+  PersonalService,
+} from './services';
 
 import { RequestWidhUser } from 'src/common/interfaces';
 import { DtoType, StepType } from './form/types';
-import { CreateContactInfoDto, CreatePersonalDto } from './dto';
+import {
+  CreateContactInfoDto,
+  CreateLocationDto,
+  CreatePersonalDto,
+} from './dto';
+import { Active, Pending, Select } from './interfaces';
+import { select } from './types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -22,11 +36,15 @@ export class UserService {
     private contactInfoService: ContactInfoService,
     @Inject(forwardRef(() => PersonalService))
     private personalService: PersonalService,
+    @Inject(forwardRef(() => LocationService))
+    private locationService: LocationService,
+
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    await this.userModel.create(createUserDto);
+  async create() {
+    const email = this.request.user;
+    await this.userModel.create(email);
 
     return 'The user has been created successfully';
   }
@@ -36,6 +54,8 @@ export class UserService {
       const data =
         step === 'contactInfo'
           ? await this.contactInfoService.create(dto as CreateContactInfoDto)
+          : step === 'location'
+          ? await this.locationService.create(dto as CreateLocationDto)
           : step === 'personal'
           ? await this.personalService.create(dto as CreatePersonalDto)
           : undefined;
@@ -47,7 +67,7 @@ export class UserService {
     }
   }
 
-  async addFormProp(prop: StepType, dto: ObjectId) {
+  private async addFormProp(prop: StepType, dto: ObjectId) {
     const email = this.request.user;
 
     return await this.userModel.findOneAndUpdate(
@@ -60,12 +80,30 @@ export class UserService {
     );
   }
 
-  async findAll() {
-    return await this.userModel.find();
+  async findAll(): Promise<Select[]> {
+    return await this.userModel.find().select(select);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne() {
+    try {
+      const email = this.request.user;
+      const user: User = await this.userModel
+        .findOne(email)
+        .populate('location');
+
+      return this.dataPicker(user.toObject());
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  private dataPicker({ role, status, ...user }: User): Pending | Active {
+    if (status === 'PENDING') return { role, status, step: user.step };
+    else if (status === 'ACTIVE') {
+      const { country } = user.location[0];
+
+      return { role, status, country };
+    }
   }
 
   // async update(service: StepDataValues, updateUserDto: StepsDto) {
