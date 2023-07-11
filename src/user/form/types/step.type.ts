@@ -1,5 +1,4 @@
 import { ContactInfo, Personal } from 'src/user/schemas';
-import { DtoType } from './dto.type';
 
 const step = ['contactInfo', 'location', 'personal'] as const;
 

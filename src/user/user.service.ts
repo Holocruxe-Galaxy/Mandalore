@@ -14,7 +14,7 @@ import { CommonService } from 'src/common/common.service';
 
 import { RequestWidhUser } from 'src/common/interfaces';
 import { Step } from './form/types';
-import { Complete, Pending, Select } from './interfaces';
+import { Complete, Pending, Select, UserProperty } from './interfaces';
 import { StatusType, select } from './types';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -34,51 +34,38 @@ export class UserService {
     return await this.userModel.create(email);
   }
 
-  // async stepFollower(step: StepType, dto: DtoType): Promise<User> {
   async stepFollower(step: Step): Promise<User> {
     try {
-      // const data =
-      //   step === 'contactInfo'
-      //     ? await this.contactInfoService.create(dto as CreateContactInfoDto)
-      //     : step === 'location'
-      //     ? await this.locationService.create(dto as CreateLocationDto)
-      //     : step === 'personal'
-      //     ? await this.personalService.create(dto as CreatePersonalDto)
-      //     : undefined;
+      const prop = Object.keys(step)[0];
+      const status = prop === 'location' ? 'COMPLETE' : null;
 
-      return this.addFormProp(step);
-      // if (data) return this.addFormProp(step, data);
-      return;
+      const data: UserProperty = this.stepHelper(
+        { [prop]: step[prop] },
+        status,
+      );
+
+      return this.addFormProp(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  private async addFormProp(data: Step) {
+  private async addFormProp(data: UserProperty) {
     const email = this.request.user;
-    const prop = Object.keys(data)[0];
-    const status = prop === 'location' ? 'COMPLETE' : null;
-
-    if (status !== null) {
-      return await this.userModel.findOneAndUpdate(
-        email,
-        {
-          [prop]: data[prop],
-          $inc: { step: +1 },
-          status,
-        },
-        { new: true },
-      );
-    }
 
     return await this.userModel.findOneAndUpdate(
       email,
       {
-        [prop]: data[prop],
+        ...data,
         $inc: { step: +1 },
       },
       { new: true },
     );
+  }
+
+  stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
+    if (status === null) return prop;
+    return { ...prop, status };
   }
 
   async findAll(): Promise<Select[]> {
