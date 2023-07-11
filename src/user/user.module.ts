@@ -20,6 +20,7 @@ import { UserSchema } from './schemas/user.schema';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { HttpModule } from '@nestjs/axios';
     ]),
     ConfigModule,
     HttpModule,
+    CommonModule,
     GroupModule,
     LikesAndDislikesModule,
     MedicalModule,

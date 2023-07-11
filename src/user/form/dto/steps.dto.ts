@@ -5,20 +5,21 @@ import {
   CreateLocationDto,
   CreatePersonalDto,
 } from 'src/user/dto';
+import { ContactInfo, Location, Personal } from 'src/user/interfaces';
 
 export class StepsDto {
   @IsOptional()
   @Type(() => CreateContactInfoDto)
   @ValidateNested()
-  contactInfo: CreateContactInfoDto;
+  contactInfo: ContactInfo;
 
   @IsOptional()
   @Type(() => CreateLocationDto)
   @ValidateNested()
-  location: CreateLocationDto;
+  location: Location;
 
   @IsOptional()
   @Type(() => CreatePersonalDto)
   @ValidateNested()
-  personal: CreatePersonalDto;
+  personal: Personal;
 }
