@@ -1,69 +1,104 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import {
+  Inject,
+  Injectable,
+  forwardRef,
+  Scope,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
-import { EntityManager, Repository } from 'typeorm';
+import { User } from './schemas';
+import { CommonService } from 'src/common/common.service';
 
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { RequestWidhUser } from 'src/common/interfaces';
+import { Step } from './form/types';
+import { Complete, Pending, Select, UserProperty } from './interfaces';
+import { StatusType, select } from './types';
 
-import { Group, User } from './entities';
-import { ContactInfoService, PersonalService } from './services';
-
-import { StepDataValues } from 'src/auth/types';
-import { StepsDto } from 'src/auth/dto';
-
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
 
-    @InjectRepository(Group)
-    private groupRepository: Repository<Group>,
+    @Inject(forwardRef(() => CommonService))
+    private commonService: CommonService,
 
-    @Inject(forwardRef(() => ContactInfoService))
-    private contactInfoService: ContactInfoService,
-    @Inject(forwardRef(() => PersonalService))
-    private personalService: PersonalService,
+    @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
-  async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create({ username: 'emi', group: [] });
 
-    // const group = this.groupRepository.create({
-    //   name: 'friends',
-    //   people: [],
-    //   user: { id: '' },
-    // });
-
-    // await this.groupRepository.save(group);
-    return 'This action adds a new user';
+  async create() {
+    const email = this.request.user;
+    return await this.userModel.create(email);
   }
 
-  async stepFollower(service: StepDataValues, dto: StepsDto) {
+  async stepFollower(step: Step): Promise<User> {
     try {
-      const dtoData = dto[service.name] as any;
-      const serviceInstance = this[service.stepService];
+      const prop = Object.keys(step)[0];
+      const status = prop === 'location' ? 'COMPLETE' : null;
 
-      return await serviceInstance.create(dtoData);
+      const data: UserProperty = this.stepHelper(
+        { [prop]: step[prop] },
+        status,
+      );
+
+      return this.addFormProp(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  private async addFormProp(data: UserProperty) {
+    const email = this.request.user;
+
+    return await this.userModel.findOneAndUpdate(
+      email,
+      {
+        ...data,
+        $inc: { step: +1 },
+      },
+      { new: true },
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
+    if (status === null) return prop;
+    return { ...prop, status };
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto);
-    return `This action updates a #${id} user`;
+  async findAll(): Promise<Select[]> {
+    return await this.userModel.find().select(select);
   }
+
+  async findOne() {
+    try {
+      const email = this.request.user;
+      const user: User = await this.userModel.findOne(email);
+
+      return this.dataPicker(user.toObject());
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  private dataPicker({ role, status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { role, status, step: user.step };
+    else if (status === 'COMPLETE') {
+      const { country } = user.location[0];
+
+      return { role, status, country };
+    }
+  }
+
+  // async update(service: StepDataValues, updateUserDto: StepsDto) {
+  //   const dtoData = service.name;
+  //   const email = this.request.user;
+  //   console.log({ [dtoData]: updateUserDto });
+  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
+  //   // return `This action updates a #${id} user`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;

@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfessionalProfileService } from './professional-profile.service';
 import { ProfessionalProfileController } from './professional-profile.controller';
 import {
@@ -11,15 +10,7 @@ import {
 } from './entities';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Educational,
-      Institution,
-      Job,
-      Professional,
-      ProfessionalProfile,
-    ]),
-  ],
+  imports: [],
   controllers: [ProfessionalProfileController],
   providers: [ProfessionalProfileService],
   exports: [ProfessionalProfileService],

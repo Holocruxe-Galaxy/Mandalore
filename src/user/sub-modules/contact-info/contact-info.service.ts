@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, ObjectId } from 'mongoose';
+
 import { CreateContactInfoDto } from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
-import { ContactInfo } from './entities/contact-info.entity';
+import { ContactInfo } from './schemas/contact-info.schema';
 
 @Injectable()
 export class ContactInfoService {
   constructor(
-    @InjectEntityManager()
-    private entityManager: EntityManager,
-    @InjectRepository(ContactInfo)
-    private contactInfoRepository: Repository<ContactInfo>,
+    @InjectModel(ContactInfo.name)
+    private contactInfoModel: Model<ContactInfo>,
   ) {}
-  async create(createContactInfoDto: CreateContactInfoDto) {
-    const contactInfo = this.contactInfoRepository.create(createContactInfoDto);
-    await this.contactInfoRepository.save(contactInfo);
-    return 'The data has been saved properly';
+  async create(createContactInfoDto: CreateContactInfoDto): Promise<ObjectId> {
+    const { _id } = await this.contactInfoModel.create(createContactInfoDto);
+
+    return _id;
   }
 
   findAll() {
@@ -27,8 +26,8 @@ export class ContactInfoService {
     return `This action returns a #${id} contactInfo`;
   }
 
-  update(id: number, updateContactInfoDto: UpdateContactInfoDto) {
-    return `This action updates a #${id} contactInfo`;
+  update(id: ObjectId, data: UpdateContactInfoDto) {
+    return `This action updates a contactInfo`;
   }
 
   remove(id: number) {

@@ -11,7 +11,7 @@ import { PersonalService } from './personal.service';
 import { CreatePersonalDto } from './dto/create-personal.dto';
 import { UpdatePersonalDto } from './dto/update-personal.dto';
 
-@Controller('personal')
+@Controller()
 export class PersonalController {
   constructor(private readonly personalService: PersonalService) {}
 

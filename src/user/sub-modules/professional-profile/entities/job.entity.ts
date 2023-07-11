@@ -1,20 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, OneToMany } from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { Institution, ProfessionalProfile } from '.';
 
-@Entity()
+@Schema()
 export class Job {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @OneToOne(
-    () => ProfessionalProfile,
-    (professionalProfile) => professionalProfile.job,
-  )
-  professionalProfile: ProfessionalProfile;
-
-  @OneToMany(() => Institution, (institution) => institution.job)
-  previousJob: Institution;
-
-  @OneToMany(() => Institution, (institution) => institution.job)
-  currentJob: Institution;
+  // @Prop()
+  // professionalProfile: ProfessionalProfile;
+  // @Prop()
+  // previousJob: Institution;
+  // @Prop()
+  // currentJob: Institution;
 }
