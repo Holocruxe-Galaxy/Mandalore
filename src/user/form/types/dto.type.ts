@@ -1,11 +1,8 @@
-import {
-  CreateContactInfoDto,
-  CreateLocationDto,
-  CreatePersonalDto,
-} from 'src/user/dto';
+import { CreateLocationDto, CreatePersonalDto } from 'src/user/dto';
+import { ContactInfo } from 'src/user/schemas';
 
 const dtos = [
-  new CreateContactInfoDto(),
+  ContactInfo,
   new CreateLocationDto(),
   new CreatePersonalDto(),
 ] as const;

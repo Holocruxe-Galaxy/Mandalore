@@ -1,14 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
-import {
-  ContactInfo,
-  Group,
-  LikesAndDislikes,
-  Location,
-  Personal,
-  ProfessionalProfile,
-} from '.';
+import { Group, LikesAndDislikes, ProfessionalProfile } from '.';
 import { PlanType, RoleType, StatusType } from '../types';
+import { ContactInfo, Location, Personal } from '../interfaces';
 
 @Schema()
 export class User extends Document {
@@ -27,9 +21,7 @@ export class User extends Document {
   @Prop({ default: 'FREE' })
   plan: PlanType;
 
-  @Prop({
-    type: { type: SchemaTypes.ObjectId, ref: 'contactInfo' },
-  })
+  @Prop({ type: SchemaTypes.Mixed })
   contactInfo: ContactInfo;
 
   // @Prop({
@@ -43,12 +35,12 @@ export class User extends Document {
   // likesAndDislikes: [LikesAndDislikes];
 
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: 'Location' }],
+    type: SchemaTypes.Mixed,
   })
-  location: [Location];
+  location: Location;
 
   @Prop({
-    type: { type: SchemaTypes.ObjectId, ref: 'personal' },
+    type: SchemaTypes.Mixed,
   })
   personal: Personal;
 

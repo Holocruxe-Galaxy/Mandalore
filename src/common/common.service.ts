@@ -23,4 +23,8 @@ export class CommonService {
   remove(id: number) {
     return `This action removes a #${id} common`;
   }
+
+  isNotNull<T>(prop: T | null): prop is T {
+    return prop !== null;
+  }
 }
