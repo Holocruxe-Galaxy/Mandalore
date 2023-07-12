@@ -4,6 +4,7 @@ import {
   forwardRef,
   Scope,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
@@ -51,16 +52,22 @@ export class UserService {
   }
 
   private async addFormProp(data: UserProperty) {
-    const email = this.request.user;
+    const user = this.request.user;
 
-    return await this.userModel.findOneAndUpdate(
-      email,
+    const response = await this.userModel.findOneAndUpdate(
+      user,
       {
         ...data,
         $inc: { step: +1 },
       },
       { new: true },
     );
+
+    if (!response)
+      throw new BadRequestException(
+        `The user with the email ${user.email} does not exist in core database.`,
+      );
+    return response;
   }
 
   stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
