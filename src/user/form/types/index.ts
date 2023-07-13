@@ -1,1 +1,1 @@
-export * from './step.type';
+export * from './step-map.type';
