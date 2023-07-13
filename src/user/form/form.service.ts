@@ -2,8 +2,8 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { StepsDto } from './dto/steps.dto';
 
 import { UserService } from '../user.service';
+import { CommonService } from 'src/common/common.service';
 
-import { Step, StepType } from './types';
 import { User } from '../schemas';
 
 @Injectable()
@@ -11,16 +11,18 @@ export class FormService {
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
+
+    @Inject(forwardRef(() => CommonService))
+    private commonService: CommonService,
   ) {}
 
   async stepManager(stepsDto: StepsDto) {
     const steps: Promise<User>[] = [];
 
     for (const step in stepsDto) {
-      steps.push(
-        // this.userService.stepFollower(step as StepType, stepsDto[step]),
-        this.userService.stepFollower({ [step]: stepsDto[step] } as Step),
-      );
+      const dto = { [step]: stepsDto[step] };
+      if (this.commonService.isDtoKey(step, dto, stepsDto))
+        steps.push(this.userService.stepFollower(dto));
     }
     const results = await Promise.all(steps);
 

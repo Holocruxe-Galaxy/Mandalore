@@ -14,9 +14,9 @@ import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
 
 import { RequestWidhUser } from 'src/common/interfaces';
-import { Step } from './form/types';
-import { Complete, Pending, Select, UserProperty } from './interfaces';
-import { StatusType, select } from './types';
+import { Complete, Pending, Select } from './interfaces';
+import { StatusType, UserProperty, select } from './types';
+import { StepMap } from './form/types';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -35,15 +35,12 @@ export class UserService {
     return await this.userModel.create(email);
   }
 
-  async stepFollower(step: Step): Promise<User> {
+  async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      const status = prop === 'location' ? 'COMPLETE' : null;
+      const status: StatusType = prop === 'location' ? 'COMPLETE' : null;
 
-      const data: UserProperty = this.stepHelper(
-        { [prop]: step[prop] },
-        status,
-      );
+      const data: UserProperty = this.stepHelper(step, status);
 
       return this.addFormProp(data);
     } catch (error) {

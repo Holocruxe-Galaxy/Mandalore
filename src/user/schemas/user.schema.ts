@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
-import { Group, LikesAndDislikes, ProfessionalProfile } from '.';
+
 import { PlanType, RoleType, StatusType } from '../types';
 import { ContactInfo, Location, Personal } from '../interfaces';
 

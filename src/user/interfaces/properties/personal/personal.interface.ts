@@ -1,4 +1,4 @@
-import { CivilStatusType, GenderType } from './types';
+import { CivilStatusType, GenderType } from 'src/user/types';
 
 export interface Personal {
   name: string;
