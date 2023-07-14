@@ -90,9 +90,9 @@ export class UserService {
   private dataPicker({ role, status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { role, status, step: user.step };
     else if (status === 'COMPLETE') {
-      const { country } = user.location[0];
+      // const { country } = user.location[0];
 
-      return { role, status, country };
+      return { role, status };
     }
   }
 

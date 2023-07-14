@@ -10,5 +10,5 @@ export interface Pending extends UserResponse {
 }
 
 export interface Complete extends UserResponse {
-  country: string;
+  country?: string;
 }
