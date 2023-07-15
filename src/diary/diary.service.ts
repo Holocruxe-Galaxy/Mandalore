@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 
 import { Diary } from './schemas';
 
@@ -34,7 +34,7 @@ export class DiaryService {
     return `This action returns a #${id} diary`;
   }
 
-  update(id: number, updateDiaryDto: UpdateDiaryDto) {
+  update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
     return `This action updates a #${id} diary`;
   }
 

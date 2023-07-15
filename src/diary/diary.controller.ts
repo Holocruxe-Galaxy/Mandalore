@@ -11,6 +11,9 @@ import { DiaryService } from './diary.service';
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 
+import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id';
+import { ObjectId } from 'mongoose';
+
 @Controller('diary')
 export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
@@ -31,8 +34,11 @@ export class DiaryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDiaryDto: UpdateDiaryDto) {
-    return this.diaryService.update(+id, updateDiaryDto);
+  update(
+    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Body() updateDiaryDto: UpdateDiaryDto,
+  ) {
+    return this.diaryService.update(id, updateDiaryDto);
   }
 
   @Delete(':id')
