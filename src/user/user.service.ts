@@ -69,7 +69,7 @@ export class UserService {
   }
 
   // If the user status should be changed to 'COMPLETE',
-  // it adds the property to the object that will update the user.
+  // it adds said property to the object that will update the user.
   stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
     if (status === null) return prop;
     return { ...prop, status };
