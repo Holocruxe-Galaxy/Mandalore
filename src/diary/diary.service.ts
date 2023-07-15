@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 
+import { Diary } from './schemas';
+
 @Injectable()
 export class DiaryService {
+  constructor(
+    @InjectModel(Diary.name)
+    private readonly diaryModel: Model<Diary>,
+  ) {}
+
   create(createDiaryDto: CreateDiaryDto) {
     return 'This action adds a new diary';
   }
