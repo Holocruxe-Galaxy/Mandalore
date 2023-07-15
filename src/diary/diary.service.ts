@@ -1,21 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { Diary } from './schemas';
+
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
-
-import { Diary } from './schemas';
+import { RequestWidhUser } from 'src/common/interfaces';
 
 @Injectable()
 export class DiaryService {
   constructor(
     @InjectModel(Diary.name)
     private readonly diaryModel: Model<Diary>,
+
+    @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
 
-  create(createDiaryDto: CreateDiaryDto) {
-    return 'This action adds a new diary';
+  async create(createDiaryDto: CreateDiaryDto) {
+    const user = this.request.user;
+    console.log(user);
+    return await this.diaryModel.create({ ...createDiaryDto, user });
   }
 
   findAll() {
