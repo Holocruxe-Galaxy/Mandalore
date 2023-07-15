@@ -3,7 +3,6 @@ import {
   Injectable,
   forwardRef,
   Scope,
-  InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -96,14 +95,6 @@ export class UserService {
       return { role, status };
     }
   }
-
-  // async update(service: StepDataValues, updateUserDto: StepsDto) {
-  //   const dtoData = service.name;
-  //   const email = this.request.user;
-  //   console.log({ [dtoData]: updateUserDto });
-  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
-  //   // return `This action updates a #${id} user`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
