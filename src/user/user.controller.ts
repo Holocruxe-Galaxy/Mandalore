@@ -3,9 +3,7 @@ import { UserService } from './user.service';
 
 @Controller({ path: 'user', scope: Scope.REQUEST })
 export class UserController {
-  constructor(
-    private readonly userService: UserService, // private readonly cls: ClsService<EmailClsStore>,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   create() {
