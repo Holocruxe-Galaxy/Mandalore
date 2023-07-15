@@ -83,7 +83,8 @@ export class UserService {
 
       return this.dataPicker(user.toObject());
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const user = await this.create();
+      return this.dataPicker(user.toObject());
     }
   }
 
