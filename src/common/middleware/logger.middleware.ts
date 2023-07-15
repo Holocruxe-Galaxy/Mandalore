@@ -21,14 +21,13 @@ export class LoggerMiddleware implements NestMiddleware {
 
   async use(req: RequestWidhUser, res: Response, next: NextFunction) {
     try {
-      // const { authorization } = req.headers;
-      // const { data } = await this.httpService.axiosRef.get<UserResponseKey>(
-      //   `${this.configService.get<string>('AUTHMICRO_SERVICE')}/users/verify`,
-      //   { headers: { authorization } },
-      // );
+      const { authorization } = req.headers;
+      const { data } = await this.httpService.axiosRef.get<UserResponseKey>(
+        `${this.configService.get<string>('AUTHMICRO_SERVICE')}/users/verify`,
+        { headers: { authorization } },
+      );
 
-      // const email = data.userMail;
-      const email = 'panchito';
+      const email = data.userMail;
       req.user = { email };
 
       next();

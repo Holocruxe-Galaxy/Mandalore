@@ -19,8 +19,8 @@ export class DiaryService {
   ) {}
 
   async create(createDiaryDto: CreateDiaryDto) {
-    const user = this.request.user;
-    console.log(user);
+    const { email: user } = this.request.user;
+
     return await this.diaryModel.create({ ...createDiaryDto, user });
   }
 
