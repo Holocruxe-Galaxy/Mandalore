@@ -18,14 +18,16 @@ export class DiaryService {
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
 
-  async create(createDiaryDto: CreateDiaryDto) {
+  async create(createDiaryDto: CreateDiaryDto): Promise<Diary> {
     const { email: user } = this.request.user;
 
     return await this.diaryModel.create({ ...createDiaryDto, user });
   }
 
-  findAll() {
-    return `This action returns all diary`;
+  async findAll(): Promise<Diary[]> {
+    const { email: user } = this.request.user;
+
+    return await this.diaryModel.find({ user });
   }
 
   findOne(id: number) {
