@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Diary extends Document {
-  @Prop()
+  @Prop({ nullable: false })
   user: string;
 
   @Prop({ nullable: false })
