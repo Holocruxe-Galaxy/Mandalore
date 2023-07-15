@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { HttpModule } from '@nestjs/axios';
+import { DiaryModule } from './diary/diary.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
     CommonModule,
     UserModule,
+    DiaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
