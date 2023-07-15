@@ -34,6 +34,8 @@ export class UserService {
     return await this.userModel.create(email);
   }
 
+  // It's called from FormService. It recieves a single user property
+  // and if it's the last one, it sets the status as 'COMPLETE'.
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
@@ -66,6 +68,8 @@ export class UserService {
     return response;
   }
 
+  // If the user status should be changed to 'COMPLETE',
+  // it adds the property to the object that will update the user.
   stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
     if (status === null) return prop;
     return { ...prop, status };
@@ -87,6 +91,8 @@ export class UserService {
     }
   }
 
+  // It picks the data requested in findOne()
+  // its result depends on whether the user completed the form or not.
   private dataPicker({ role, status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { role, status, step: user.step };
     else if (status === 'COMPLETE') {
