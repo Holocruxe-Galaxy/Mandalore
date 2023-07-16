@@ -42,7 +42,7 @@ export class DiaryController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.diaryService.remove(+id);
+  remove(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+    return this.diaryService.remove(id);
   }
 }

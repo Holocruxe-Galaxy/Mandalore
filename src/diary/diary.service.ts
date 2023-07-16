@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -34,11 +34,25 @@ export class DiaryService {
     return `This action returns a #${id} diary`;
   }
 
-  update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
-    return `This action updates a #${id} diary`;
+  async update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
+    try {
+      return await this.diaryModel.findByIdAndUpdate(id, updateDiaryDto, {
+        new: true,
+      });
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} diary`;
+  async remove(id: ObjectId) {
+    try {
+      return await this.diaryModel.findByIdAndUpdate(
+        id,
+        { deletedAt: new Date() },
+        { new: true },
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }
