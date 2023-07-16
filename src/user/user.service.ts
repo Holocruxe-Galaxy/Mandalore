@@ -3,7 +3,6 @@ import {
   Injectable,
   forwardRef,
   Scope,
-  InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -35,6 +34,8 @@ export class UserService {
     return await this.userModel.create(email);
   }
 
+  // It's called from FormService. It recieves a single user property
+  // and if it's the last one, it sets the status as 'COMPLETE'.
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
@@ -67,7 +68,9 @@ export class UserService {
     return response;
   }
 
-  stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
+  // If the user status should be changed to 'COMPLETE',
+  // it adds said property to the object that will update the user.
+  stepHelper(prop: StepMap, status: StatusType | null): UserProperty {
     if (status === null) return prop;
     return { ...prop, status };
   }
@@ -88,6 +91,8 @@ export class UserService {
     }
   }
 
+  // It picks the data requested in findOne()
+  // its result depends on whether the user completed the form or not.
   private dataPicker({ role, status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { role, status, step: user.step };
     else if (status === 'COMPLETE') {
@@ -96,14 +101,6 @@ export class UserService {
       return { role, status };
     }
   }
-
-  // async update(service: StepDataValues, updateUserDto: StepsDto) {
-  //   const dtoData = service.name;
-  //   const email = this.request.user;
-  //   console.log({ [dtoData]: updateUserDto });
-  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
-  //   // return `This action updates a #${id} user`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
