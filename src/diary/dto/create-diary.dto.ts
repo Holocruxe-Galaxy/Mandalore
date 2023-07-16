@@ -1,7 +1,10 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateUserDto {
+export class CreateDiaryDto {
+  @IsString()
+  content: string;
+
   @IsOptional()
   @IsString()
-  image_profile_url: string;
+  emoji: string;
 }
