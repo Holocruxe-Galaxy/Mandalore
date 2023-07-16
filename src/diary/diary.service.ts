@@ -27,7 +27,7 @@ export class DiaryService {
   async findAll(): Promise<Diary[]> {
     const { email: user } = this.request.user;
 
-    return await this.diaryModel.find({ user });
+    return await this.diaryModel.find({ user, deletedAt: null });
   }
 
   findOne(id: number) {
@@ -46,11 +46,13 @@ export class DiaryService {
 
   async remove(id: ObjectId) {
     try {
-      return await this.diaryModel.findByIdAndUpdate(
+      await this.diaryModel.findByIdAndUpdate(
         id,
         { deletedAt: new Date() },
         { new: true },
       );
+
+      return 'Entry deleted successfully.';
     } catch (error) {
       throw new BadRequestException(error.message);
     }
