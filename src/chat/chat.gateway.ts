@@ -2,14 +2,23 @@ import {
   WebSocketGateway,
   SubscribeMessage,
   MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { Socket } from 'socket.io';
 
-@WebSocketGateway()
-export class ChatGateway {
+@WebSocketGateway({ cors: true })
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
+  handleConnection(client: Socket, ...args: any[]) {
+    throw new Error('Method not implemented.');
+  }
+  handleDisconnect(client: any) {
+    throw new Error('Method not implemented.');
+  }
 
   @SubscribeMessage('createChat')
   create(@MessageBody() createChatDto: CreateChatDto) {
