@@ -9,6 +9,7 @@ import { CommonModule } from './common/common.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { HttpModule } from '@nestjs/axios';
 import { DiaryModule } from './diary/diary.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DiaryModule } from './diary/diary.module';
     CommonModule,
     UserModule,
     DiaryModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
