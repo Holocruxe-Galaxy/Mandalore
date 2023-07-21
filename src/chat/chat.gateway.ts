@@ -14,10 +14,12 @@ import { Socket } from 'socket.io';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
   handleConnection(client: Socket, ...args: any[]) {
-    throw new Error('Method not implemented.');
+    console.log(`Client connected`);
+    // throw new Error('Method not implemented.');
   }
-  handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
+  handleDisconnect(client: Socket) {
+    console.log('Client disconnected');
+    // throw new Error('Method not implemented.');
   }
 
   @SubscribeMessage('createChat')
