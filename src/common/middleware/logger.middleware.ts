@@ -21,6 +21,9 @@ export class LoggerMiddleware implements NestMiddleware {
 
   async use(req: RequestWidhUser, res: Response, next: NextFunction) {
     try {
+      if (this.configService.get<string>('LOCAL'))
+        return (req.user = { email: 'nataluz@gmail.com' });
+
       const { authorization } = req.headers;
       const { data } = await this.httpService.axiosRef.get<UserResponseKey>(
         `${this.configService.get<string>('AUTHMICRO_SERVICE')}/users/verify`,
