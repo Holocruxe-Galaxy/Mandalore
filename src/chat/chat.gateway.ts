@@ -24,6 +24,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('createChat')
   create(@MessageBody() createChatDto: CreateChatDto) {
+    console.log(createChatDto);
     return this.chatService.create(createChatDto);
   }
 
