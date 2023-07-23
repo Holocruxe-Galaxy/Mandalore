@@ -3,17 +3,24 @@ import { validate } from 'class-validator';
 import { CreateChatDto } from '../dto/create-chat.dto';
 import { plainToClass } from 'class-transformer';
 import { validationOptions } from 'src/main';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class ParseSocketContent implements PipeTransform {
   async transform(value: unknown) {
-    // if (!isValidObjectId(value)) {
-    //   throw new BadRequestException(`${value} is not a valid MongoID`);
-    // }
+    const errors = await validate(
+      plainToClass(CreateChatDto, value),
+      validationOptions,
+    );
 
-    const hola = await validate(plainToClass(CreateChatDto, validationOptions));
+    if (errors.length) {
+      const response = errors.map(
+        (error) => Object.values(error.constraints)[0],
+      );
 
-    console.log(hola);
+      throw new WsException(response);
+    }
+
     return value;
   }
 }

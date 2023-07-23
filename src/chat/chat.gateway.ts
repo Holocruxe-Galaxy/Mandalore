@@ -4,6 +4,7 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  BaseWsExceptionFilter,
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -16,7 +17,7 @@ import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
   handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Client connected`);
+    return this.chatService.registerClient(client);
     // throw new Error('Method not implemented.');
   }
   handleDisconnect(client: Socket) {
@@ -24,11 +25,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // throw new Error('Method not implemented.');
   }
 
+  // @UseFilters(new BaseWsExceptionFilter())
   @UsePipes(new ParseSocketContent())
   @SubscribeMessage('createChat')
   create(@MessageBody() createChatDto: CreateChatDto) {
     console.log(createChatDto);
-    return this.chatService.create(createChatDto);
+    const events = 'createChat';
+    console.log(events);
+    // return this.chatService.create(createChatDto);
   }
 
   @SubscribeMessage('findAllChat')
