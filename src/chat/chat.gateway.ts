@@ -9,6 +9,8 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Socket } from 'socket.io';
+import { UsePipes } from '@nestjs/common';
+import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -22,6 +24,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // throw new Error('Method not implemented.');
   }
 
+  @UsePipes(new ParseSocketContent())
   @SubscribeMessage('createChat')
   create(@MessageBody() createChatDto: CreateChatDto) {
     console.log(createChatDto);

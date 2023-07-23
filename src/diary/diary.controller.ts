@@ -11,7 +11,7 @@ import { DiaryService } from './diary.service';
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 
-import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id';
+import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id.pipe';
 import { ObjectId } from 'mongoose';
 
 @Controller('diary')
