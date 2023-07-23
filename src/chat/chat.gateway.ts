@@ -16,13 +16,11 @@ import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket) {
     return this.chatService.registerClient(client);
-    // throw new Error('Method not implemented.');
   }
   handleDisconnect(client: Socket) {
-    console.log('Client disconnected');
-    // throw new Error('Method not implemented.');
+    return this.chatService.removeClient(client.id);
   }
 
   // @UseFilters(new BaseWsExceptionFilter())

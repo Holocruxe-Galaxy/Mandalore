@@ -12,6 +12,10 @@ export class ChatService {
     this.connectedClients[client.id] = client;
   }
 
+  removeClient(clientId: string) {
+    delete this.connectedClients[clientId];
+  }
+
   create(createChatDto: CreateChatDto) {
     return 'This action adds a new chat';
   }
