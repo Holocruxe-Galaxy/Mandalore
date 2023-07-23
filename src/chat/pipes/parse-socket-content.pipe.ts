@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { CreateChatDto } from '../dto/create-chat.dto';
+import { Message } from '../dto/message.dto';
 import { plainToClass } from 'class-transformer';
 import { validationOptions } from 'src/main';
 import { WsException } from '@nestjs/websockets';
@@ -9,7 +9,7 @@ import { WsException } from '@nestjs/websockets';
 export class ParseSocketContent implements PipeTransform {
   async transform(value: unknown) {
     const errors = await validate(
-      plainToClass(CreateChatDto, value),
+      plainToClass(Message, value),
       validationOptions,
     );
 

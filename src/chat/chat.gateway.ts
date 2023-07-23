@@ -4,10 +4,9 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  BaseWsExceptionFilter,
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { Message } from './dto/message.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Socket } from 'socket.io';
 import { UsePipes } from '@nestjs/common';
@@ -17,20 +16,22 @@ import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
   handleConnection(client: Socket) {
-    return this.chatService.registerClient(client);
+    this.chatService.registerClient(client);
   }
   handleDisconnect(client: Socket) {
     return this.chatService.removeClient(client.id);
   }
 
-  // @UseFilters(new BaseWsExceptionFilter())
+  @UsePipes(new ParseSocketContent())
+  @SubscribeMessage('broadcast')
+  broadCast(@MessageBody() message: Message) {
+    return this.chatService.broadcast(message);
+  }
+
   @UsePipes(new ParseSocketContent())
   @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    console.log(createChatDto);
-    const events = 'createChat';
-    console.log(events);
-    // return this.chatService.create(createChatDto);
+  create(@MessageBody() message: Message) {
+    return this.chatService.create(message);
   }
 
   @SubscribeMessage('findAllChat')

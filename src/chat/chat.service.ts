@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { WebSocketServer } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+
+import { Message } from './dto/message.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { ConnectedClients } from './interfaces/connected-clients.interface';
-import { Socket } from 'socket.io';
 
 @Injectable()
 export class ChatService {
-  private connectedClients: ConnectedClients = {};
+  private readonly connectedClients: ConnectedClients = {};
+  @WebSocketServer() private readonly server: Server;
 
   registerClient(client: Socket) {
     this.connectedClients[client.id] = client;
@@ -16,7 +19,15 @@ export class ChatService {
     delete this.connectedClients[clientId];
   }
 
-  create(createChatDto: CreateChatDto) {
+  getConnectedClients() {
+    return Object.keys(this.connectedClients).length;
+  }
+
+  broadcast(message: Message) {
+    return this.server.emit('broadcast', message);
+  }
+
+  create(message: Message) {
     return 'This action adds a new chat';
   }
 
