@@ -11,7 +11,6 @@ import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
 import { Message } from './dto/message.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 
 @WebSocketGateway({ cors: true })
@@ -22,6 +21,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(client: Socket) {
     this.chatService.registerClient(client);
   }
+
   handleDisconnect(client: Socket) {
     return this.chatService.removeClient(client.id);
   }
@@ -35,26 +35,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UsePipes(new ParseSocketContent())
   @SubscribeMessage('clientChat')
   clientChat(@MessageBody() message: Message) {
-    return this.chatService.clientChat(message);
-  }
-
-  @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
-  }
-
-  @SubscribeMessage('findOneChat')
-  findOne(@MessageBody() id: number) {
-    return this.chatService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChat')
-  update(@MessageBody() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(updateChatDto.id, updateChatDto);
-  }
-
-  @SubscribeMessage('removeChat')
-  remove(@MessageBody() id: number) {
-    return this.chatService.remove(id);
+    this.chatService.clientChat(message);
   }
 }
