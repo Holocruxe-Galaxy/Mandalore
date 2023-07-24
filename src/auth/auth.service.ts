@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserResponseKey } from 'src/common/interfaces/user-key.interface';
+import { UserResponseKey } from 'src/common/interfaces';
 
 @Injectable()
 export class AuthService {

@@ -8,8 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Response, NextFunction } from 'express';
-import { RequestWidhUser } from '../interfaces';
-import { UserResponseKey } from '../interfaces/user-key.interface';
+import { RequestWidhUser, UserResponseKey } from '../interfaces';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
