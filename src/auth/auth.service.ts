@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserResponseKey } from 'src/common/interfaces';
+import { UserKey, UserResponseKey } from 'src/common/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
   ) {}
-  async isUser(token: string) {
+  async isUser(token: string): Promise<UserKey> {
     try {
       if (this.configService.get<string>('LOCAL')) {
         return { email: 'nataluz@gmail.com' };

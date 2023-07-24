@@ -3,13 +3,14 @@ import { Socket } from 'socket.io';
 
 import { ConnectedClients } from './interfaces';
 import { Message } from './dto';
+import { UserKey } from 'src/common/interfaces';
 
 @Injectable()
 export class ChatService {
   private readonly connectedClients: ConnectedClients = {};
 
-  registerClient(client: Socket) {
-    this.connectedClients[client.id] = client;
+  registerClient(client: Socket, email: UserKey) {
+    this.connectedClients[client.id] = { ...email, client };
   }
 
   removeClient(clientId: string) {
@@ -20,11 +21,11 @@ export class ChatService {
     return Object.keys(this.connectedClients).length;
   }
 
-  broadcast(message: Message) {
+  broadcast(message: Message, client: Socket) {
     return message;
   }
 
-  clientChat(message: Message) {
+  clientChat(message: Message, client: Socket) {
     return message;
   }
 }
