@@ -3,6 +3,7 @@ import { Document, SchemaTypes } from 'mongoose';
 
 import { PlanType, RoleType, StatusType } from '../types';
 import { ContactInfo, Location, Personal } from '../interfaces';
+import { Chat } from 'src/chat/entities';
 
 @Schema()
 export class User extends Document {
@@ -33,6 +34,11 @@ export class User extends Document {
     type: SchemaTypes.Mixed,
   })
   personal: Personal;
+
+  @Prop({
+    type: SchemaTypes.ObjectId,
+  })
+  chat: Chat[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
