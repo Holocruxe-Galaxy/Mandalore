@@ -1,9 +1,12 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { validate } from 'class-validator';
-import { Message } from '../dto/message.dto';
-import { plainToClass } from 'class-transformer';
-import { validationOptions } from 'src/main';
 import { WsException } from '@nestjs/websockets';
+
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+
+import { validationOptions } from 'src/main';
+
+import { Message } from '../dto/message.dto';
 
 @Injectable()
 export class ParseSocketContent implements PipeTransform {
