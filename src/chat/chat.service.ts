@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 import { Message } from './dto/message.dto';
@@ -9,7 +8,6 @@ import { ConnectedClients } from './interfaces/connected-clients.interface';
 @Injectable()
 export class ChatService {
   private readonly connectedClients: ConnectedClients = {};
-  @WebSocketServer() private readonly server: Server;
 
   registerClient(client: Socket) {
     this.connectedClients[client.id] = client;
@@ -23,8 +21,9 @@ export class ChatService {
     return Object.keys(this.connectedClients).length;
   }
 
-  broadcast(message: Message) {
-    return this.server.emit('broadcast', message);
+  broadcast(message: Message, server: Server) {
+    server.emit('broadcast', message);
+    // return this.server.emit('broadcast', message);
   }
 
   create(message: Message) {

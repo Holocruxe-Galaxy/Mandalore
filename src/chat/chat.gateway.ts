@@ -4,17 +4,21 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  WebSocketServer,
 } from '@nestjs/websockets';
+import { UsePipes } from '@nestjs/common';
+import { Server, Socket } from 'socket.io';
+
 import { ChatService } from './chat.service';
 import { Message } from './dto/message.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { Socket } from 'socket.io';
-import { UsePipes } from '@nestjs/common';
 import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly chatService: ChatService) {}
+  @WebSocketServer() server: Server;
+
   handleConnection(client: Socket) {
     this.chatService.registerClient(client);
   }
@@ -25,7 +29,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UsePipes(new ParseSocketContent())
   @SubscribeMessage('broadcast')
   broadCast(@MessageBody() message: Message) {
-    return this.chatService.broadcast(message);
+    return this.chatService.broadcast(message, this.server);
   }
 
   @UsePipes(new ParseSocketContent())
