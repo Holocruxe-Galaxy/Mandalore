@@ -3,7 +3,6 @@ import {
   Injectable,
   forwardRef,
   Scope,
-  InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -35,10 +34,12 @@ export class UserService {
     return await this.userModel.create(email);
   }
 
+  // It's called from FormService. It recieves a single user property
+  // and if it's the last one, it sets the status as 'COMPLETE'.
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      const status: StatusType = prop === 'location' ? 'COMPLETE' : null;
+      const status: StatusType = prop === 'personal' ? 'COMPLETE' : null;
 
       const data: UserProperty = this.stepHelper(step, status);
 
@@ -67,7 +68,9 @@ export class UserService {
     return response;
   }
 
-  stepHelper<T>(prop: T, status: StatusType | null): T | (T & StatusType) {
+  // If the user status should be changed to 'COMPLETE',
+  // it adds said property to the object that will update the user.
+  stepHelper(prop: StepMap, status: StatusType | null): UserProperty {
     if (status === null) return prop;
     return { ...prop, status };
   }
@@ -83,26 +86,21 @@ export class UserService {
 
       return this.dataPicker(user.toObject());
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      const user = await this.create();
+      return this.dataPicker(user.toObject());
     }
   }
 
+  // It picks the data requested in findOne()
+  // its result depends on whether the user completed the form or not.
   private dataPicker({ role, status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { role, status, step: user.step };
     else if (status === 'COMPLETE') {
-      const { country } = user.location[0];
+      // const { country } = user.location[0];
 
-      return { role, status, country };
+      return { role, status };
     }
   }
-
-  // async update(service: StepDataValues, updateUserDto: StepsDto) {
-  //   const dtoData = service.name;
-  //   const email = this.request.user;
-  //   console.log({ [dtoData]: updateUserDto });
-  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
-  //   // return `This action updates a #${id} user`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;

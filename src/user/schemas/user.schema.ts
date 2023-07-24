@@ -24,16 +24,6 @@ export class User extends Document {
   @Prop({ type: SchemaTypes.Mixed })
   contactInfo: ContactInfo;
 
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: Group.name }],
-  // })
-  // group: [Group];
-
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
-  // })
-  // likesAndDislikes: [LikesAndDislikes];
-
   @Prop({
     type: SchemaTypes.Mixed,
   })
@@ -43,11 +33,6 @@ export class User extends Document {
     type: SchemaTypes.Mixed,
   })
   personal: Personal;
-
-  // @Prop({
-  //   type: [{ type: SchemaTypes, ref: 'professionalProfile' }],
-  // })
-  // professionalProfile: ProfessionalProfile;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
