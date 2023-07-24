@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
-import { Message } from './dto/message.dto';
-import { ConnectedClients } from './interfaces/connected-clients.interface';
+import { ConnectedClients } from './interfaces';
+import { Message } from './dto';
 
 @Injectable()
 export class ChatService {

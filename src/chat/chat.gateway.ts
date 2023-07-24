@@ -10,8 +10,9 @@ import { UsePipes } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
-import { Message } from './dto/message.dto';
-import { ParseSocketContent } from './pipes/parse-socket-content.pipe';
+import { Message } from './dto';
+
+import { ParseSocketContent } from './pipes';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
