@@ -29,13 +29,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UsePipes(new ParseSocketContent())
   @SubscribeMessage('broadcast')
   broadCast(@MessageBody() message: Message) {
-    return this.chatService.broadcast(message, this.server);
+    this.server.emit('broadcast', this.chatService.broadcast(message));
   }
 
   @UsePipes(new ParseSocketContent())
-  @SubscribeMessage('createChat')
-  create(@MessageBody() message: Message) {
-    return this.chatService.create(message);
+  @SubscribeMessage('clientChat')
+  clientChat(@MessageBody() message: Message) {
+    return this.chatService.clientChat(message);
   }
 
   @SubscribeMessage('findAllChat')

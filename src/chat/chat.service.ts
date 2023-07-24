@@ -21,12 +21,11 @@ export class ChatService {
     return Object.keys(this.connectedClients).length;
   }
 
-  broadcast(message: Message, server: Server) {
-    server.emit('broadcast', message);
-    // return this.server.emit('broadcast', message);
+  broadcast(message: Message) {
+    return message;
   }
 
-  create(message: Message) {
+  clientChat(message: Message) {
     return 'This action adds a new chat';
   }
 
