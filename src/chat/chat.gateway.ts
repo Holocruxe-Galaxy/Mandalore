@@ -57,14 +57,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody(new ParseSocketContent()) message: Message,
     @ConnectedSocket() client: Socket,
   ) {
-    this.chatService.clientChat(message, client);
+    client.emit('clientChat', this.chatService.clientChat(message, client));
   }
 
   @SubscribeMessage('connectedClients')
-  getConnectedClients() {
-    this.server.emit(
-      'connectedClients',
-      this.chatService.getConnectedClients(),
-    );
+  getConnectedClients(@ConnectedSocket() client: Socket) {
+    client.emit('connectedClients', this.chatService.getConnectedClients());
   }
 }
