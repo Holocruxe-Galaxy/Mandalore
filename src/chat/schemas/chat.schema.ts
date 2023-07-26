@@ -11,6 +11,9 @@ export class Chat extends Document {
 
   @Prop({ default: false })
   seen: boolean;
+
+  @Prop({ default: false })
+  isBroadcasted: boolean;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

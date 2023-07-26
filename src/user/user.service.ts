@@ -41,15 +41,15 @@ export class UserService {
       const prop = Object.keys(step)[0];
       const status: StatusType = prop === 'personal' ? 'COMPLETE' : null;
 
-      const data: UserProperty = this.stepHelper(step, status);
+      const data: UserProperty = this.addCompleteStatus(step, status);
 
-      return this.addFormProp(data);
+      return this.addFormStepToUser(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  private async addFormProp(data: UserProperty) {
+  private async addFormStepToUser(data: UserProperty) {
     const user = this.request.user;
 
     const response = await this.userModel.findOneAndUpdate(
@@ -70,7 +70,10 @@ export class UserService {
 
   // If the user status should be changed to 'COMPLETE',
   // it adds said property to the object that will update the user.
-  stepHelper(prop: StepMap, status: StatusType | null): UserProperty {
+  private addCompleteStatus(
+    prop: StepMap,
+    status: StatusType | null,
+  ): UserProperty {
     if (status === null) return prop;
     return { ...prop, status };
   }

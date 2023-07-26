@@ -4,6 +4,7 @@ import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
 import { Chat, ChatSchema } from './schemas';
 import { AuthModule } from 'src/auth/auth.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from 'src/auth/auth.module';
       },
     ]),
     forwardRef(() => AuthModule),
+    UserModule,
   ],
   providers: [ChatGateway, ChatService],
 })
