@@ -7,18 +7,16 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Inject, UseGuards, forwardRef } from '@nestjs/common';
+import { Inject, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
 import { CreateMessageDto } from './dto';
 
 import { ParseSocketContent } from './pipes';
-import { WsGuard } from './guards/ws.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UserKey } from 'src/common/interfaces';
 
-// @UseGuards(WsGuard)
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
