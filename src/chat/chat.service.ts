@@ -1,24 +1,47 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Socket } from 'socket.io';
+import { Model } from 'mongoose';
 
-import { ConnectedClients } from './interfaces';
-import { Message } from './dto';
+import { ConnectedClients, Message } from './interfaces';
+import { CreateMessageDto } from './dto';
 import { UserKey } from 'src/common/interfaces';
-import { UserService } from 'src/user/user.service';
+import { Chat } from './schemas';
+import { User } from 'src/user/schemas';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject(forwardRef(() => UserService))
-    private userService: UserService,
+    @InjectModel(Chat.name)
+    private readonly chatModel: Model<Chat>,
+
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
   ) {}
   private readonly connectedClients: ConnectedClients = {};
 
-  registerClient(client: Socket, email: UserKey) {
+  async registerClient(client: Socket, email: UserKey) {
     this.connectedClients[client.id] = { ...email, client };
+
+    const chat = await this.chatModel.create({ sessionId: client.id });
+
+    await this.userModel.findOneAndUpdate(email, { $push: { chat } });
   }
 
-  removeClient(clientId: string) {
+  async removeClient(clientId: string) {
+    const chatSession = await this.chatModel.findOne({ sessionId: clientId });
+
+    if (!chatSession?.messages?.length) {
+      const email = this.connectedClients[clientId].email;
+      const { _id } = await this.chatModel.findOneAndDelete({
+        sessionId: clientId,
+      });
+      await this.userModel.findOneAndUpdate(
+        { email },
+        { $pull: { chat: _id } },
+      );
+    }
+
     delete this.connectedClients[clientId];
   }
 
@@ -26,15 +49,28 @@ export class ChatService {
     return Object.keys(this.connectedClients).length;
   }
 
-  broadcast(message: Message, client: Socket) {
-    const email = this.connectedClients[client.id].email;
+  async broadcast(message: string, client: Socket) {
+    const chat = await this.manageChat(client.id, {
+      message,
+      isBroadcasted: true,
+    });
 
-    // this.userService.stepFollower.
-
-    return message;
+    return chat;
   }
 
-  clientChat(message: Message, client: Socket) {
-    return message;
+  async clientChat(message: string, client: Socket) {
+    const chat = await this.manageChat(client.id, { message });
+
+    return chat;
+  }
+
+  async manageChat(sessionId: string, message: Message): Promise<Chat> {
+    return await this.chatModel.findOneAndUpdate(
+      { sessionId },
+      {
+        $push: { messages: message },
+      },
+      { new: true },
+    );
   }
 }

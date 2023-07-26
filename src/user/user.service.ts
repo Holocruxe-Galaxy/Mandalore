@@ -12,7 +12,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
 
-import { RequestWidhUser } from 'src/common/interfaces';
+import { RequestWidhUser, UserKey } from 'src/common/interfaces';
 import { Complete, Pending, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
@@ -103,6 +103,10 @@ export class UserService {
 
       return { role, status };
     }
+  }
+
+  update(email: UserKey, data: object) {
+    const response = this.userModel.findOneAndUpdate(email, data);
   }
 
   remove(id: number) {

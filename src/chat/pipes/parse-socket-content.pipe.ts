@@ -6,7 +6,7 @@ import { plainToClass } from 'class-transformer';
 
 import { validationOptions } from 'src/main';
 
-import { Message } from '../dto/message.dto';
+import { CreateMessageDto } from '../dto';
 
 @Injectable()
 export class ParseSocketContent implements PipeTransform {
@@ -14,7 +14,7 @@ export class ParseSocketContent implements PipeTransform {
     const jsonValue = typeof value === 'string' ? JSON.parse(value) : value;
 
     const errors = await validate(
-      plainToClass(Message, jsonValue),
+      plainToClass(CreateMessageDto, jsonValue),
       validationOptions,
     );
 
@@ -26,6 +26,6 @@ export class ParseSocketContent implements PipeTransform {
       throw new WsException(response);
     }
 
-    return value;
+    return jsonValue;
   }
 }

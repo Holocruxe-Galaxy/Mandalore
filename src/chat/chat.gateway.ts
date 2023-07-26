@@ -11,7 +11,7 @@ import { Inject, UseGuards, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
-import { Message } from './dto';
+import { CreateMessageDto } from './dto';
 
 import { ParseSocketContent } from './pipes';
 import { WsGuard } from './guards/ws.guard';
@@ -45,19 +45,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('broadcast')
-  broadCast(
-    @MessageBody(new ParseSocketContent()) message: Message,
+  async broadCast(
+    @MessageBody(new ParseSocketContent()) createMessageDto: CreateMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    this.server.emit('broadcast', this.chatService.broadcast(message, client));
+    this.server.emit(
+      'broadcast',
+      await this.chatService.broadcast(createMessageDto.message, client),
+    );
   }
 
   @SubscribeMessage('clientChat')
-  clientChat(
-    @MessageBody(new ParseSocketContent()) message: Message,
+  async clientChat(
+    @MessageBody(new ParseSocketContent()) createMessageDto: CreateMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    client.emit('clientChat', this.chatService.clientChat(message, client));
+    client.emit(
+      'clientChat',
+      await this.chatService.clientChat(createMessageDto.message, client),
+    );
   }
 
   @SubscribeMessage('connectedClients')

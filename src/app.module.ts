@@ -10,6 +10,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { HttpModule } from '@nestjs/axios';
 import { DiaryModule } from './diary/diary.module';
 import { ChatModule } from './chat/chat.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ChatModule } from './chat/chat.module';
     ConfigModule,
     HttpModule,
     CommonModule,
+    AuthModule,
     UserModule,
     DiaryModule,
     ChatModule,

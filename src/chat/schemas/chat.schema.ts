@@ -1,19 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes } from 'mongoose';
+import { Message } from '../interfaces';
 
 @Schema({ timestamps: true })
 export class Chat extends Document {
-  @Prop()
-  messages: string[];
+  @Prop({ type: SchemaTypes.Mixed })
+  messages: Message[];
 
   @Prop()
   sessionId: string;
-
-  @Prop({ default: false })
-  seen: boolean;
-
-  @Prop({ default: false })
-  isBroadcasted: boolean;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
