@@ -6,6 +6,9 @@ export class Chat extends Document {
   @Prop()
   messages: string[];
 
+  @Prop()
+  sessionId: string;
+
   @Prop({ default: false })
   seen: boolean;
 }

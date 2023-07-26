@@ -11,8 +11,10 @@ import { Message } from '../dto/message.dto';
 @Injectable()
 export class ParseSocketContent implements PipeTransform {
   async transform(value: unknown) {
+    const jsonValue = typeof value === 'string' ? JSON.parse(value) : value;
+
     const errors = await validate(
-      plainToClass(Message, value),
+      plainToClass(Message, jsonValue),
       validationOptions,
     );
 

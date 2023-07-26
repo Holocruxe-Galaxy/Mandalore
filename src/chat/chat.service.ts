@@ -22,6 +22,7 @@ export class ChatService {
   }
 
   broadcast(message: Message, client: Socket) {
+    // console.log(client);
     return message;
   }
 
