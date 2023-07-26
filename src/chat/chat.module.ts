@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
-import { Chat, ChatSchema } from './entities';
+import { Chat, ChatSchema } from './schemas';
 import { AuthModule } from 'src/auth/auth.module';
 
 @Module({

@@ -3,7 +3,7 @@ import { Document, SchemaTypes } from 'mongoose';
 
 import { PlanType, RoleType, StatusType } from '../types';
 import { ContactInfo, Location, Personal } from '../interfaces';
-import { Chat } from 'src/chat/entities';
+import { Chat } from 'src/chat/schemas';
 
 @Schema()
 export class User extends Document {

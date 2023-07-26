@@ -7,7 +7,7 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Inject, UseGuards, UsePipes, forwardRef } from '@nestjs/common';
+import { Inject, UseGuards, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
