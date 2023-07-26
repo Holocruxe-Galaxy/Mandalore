@@ -4,7 +4,6 @@ import { Socket } from 'socket.io';
 import { Model } from 'mongoose';
 
 import { ConnectedClients, Message } from './interfaces';
-import { CreateMessageDto } from './dto';
 import { UserKey } from 'src/common/interfaces';
 import { Chat } from './schemas';
 import { User } from 'src/user/schemas';
