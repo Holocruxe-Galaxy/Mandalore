@@ -12,7 +12,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
 
-import { RequestWidhUser } from 'src/common/interfaces';
+import { RequestWidhUser, UserKey } from 'src/common/interfaces';
 import { Complete, Pending, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
@@ -41,15 +41,15 @@ export class UserService {
       const prop = Object.keys(step)[0];
       const status: StatusType = prop === 'personal' ? 'COMPLETE' : null;
 
-      const data: UserProperty = this.stepHelper(step, status);
+      const data: UserProperty = this.addCompleteStatus(step, status);
 
-      return this.addFormProp(data);
+      return this.addFormStepToUser(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  private async addFormProp(data: UserProperty) {
+  private async addFormStepToUser(data: UserProperty) {
     const user = this.request.user;
 
     const response = await this.userModel.findOneAndUpdate(
@@ -70,7 +70,10 @@ export class UserService {
 
   // If the user status should be changed to 'COMPLETE',
   // it adds said property to the object that will update the user.
-  stepHelper(prop: StepMap, status: StatusType | null): UserProperty {
+  private addCompleteStatus(
+    prop: StepMap,
+    status: StatusType | null,
+  ): UserProperty {
     if (status === null) return prop;
     return { ...prop, status };
   }
@@ -100,6 +103,10 @@ export class UserService {
 
       return { role, status };
     }
+  }
+
+  update(email: UserKey, data: object) {
+    const response = this.userModel.findOneAndUpdate(email, data);
   }
 
   remove(id: number) {
