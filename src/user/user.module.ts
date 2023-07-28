@@ -11,8 +11,7 @@ import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { CommonModule } from 'src/common/common.module';
 import { FormModule } from './form/form.module';
 
-import { User } from './schemas';
-import { UserSchema } from './schemas/user.schema';
+import { User, UserSchema } from './schemas';
 
 import { routes } from './routes';
 
