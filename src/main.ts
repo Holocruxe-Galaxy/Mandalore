@@ -15,13 +15,22 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
+  const LOCAL = configService.get<string>('LOCAL');
   const FRONTEND = configService.get<string>('FRONT_URL');
 
   app.use(cookieParser());
-  app.enableCors({
-    origin: `${FRONTEND}`,
-    credentials: true,
-  });
+
+  if (LOCAL) {
+    app.enableCors({
+      origin: `${FRONTEND}`,
+      credentials: true,
+    });
+  } else {
+    app.enableCors({
+      origin: '*',
+      credentials: true,
+    });
+  }
 
   app.useGlobalPipes(new ValidationPipe(validationOptions));
 
