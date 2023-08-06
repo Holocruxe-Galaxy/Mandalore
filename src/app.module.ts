@@ -35,6 +35,6 @@ import { LogbookModule } from './logbook/logbook.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).exclude('/').forRoutes('*');
   }
 }
