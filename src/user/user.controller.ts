@@ -17,10 +17,17 @@ export class UserController {
   }
 
   @Get('data')
-  find() {
+  findData() {
     // Should return an object with the properties:
     // Status, Role, Country
     return this.userService.findOne();
+  }
+
+  @Get()
+  find() {
+    // Should return an object with the properties:
+    // Status, Role, Country
+    return this.userService.mockUserData();
   }
 
   @Delete(':id')

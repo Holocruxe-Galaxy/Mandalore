@@ -94,8 +94,17 @@ export class UserService {
     }
   }
 
-  private addMockData(user: Pending | Complete) {
-    return { ...user };
+  mockUserData() {
+    return {
+      userName: 'Panchito',
+      birthdate: '02/29/2000',
+      province: 'Buenos Aires',
+      country: 'Argentina',
+      telephone: 'AR+541112345678',
+      email: 'email@mail.com',
+      language: 'Spanish',
+      state: 'COMPLETE',
+    };
   }
 
   // It picks the data requested in findOne()
