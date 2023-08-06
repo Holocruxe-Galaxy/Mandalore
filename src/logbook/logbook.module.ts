@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { LogbookService } from './logbook.service';
-import { LogbookController } from './logbook.controller';
+import { DiaryModule } from './diary/diary.module';
+import { OrganizerModule } from './organizer/organizer.module';
 
 @Module({
-  controllers: [LogbookController],
-  providers: [LogbookService]
+  imports: [DiaryModule, OrganizerModule],
 })
 export class LogbookModule {}
