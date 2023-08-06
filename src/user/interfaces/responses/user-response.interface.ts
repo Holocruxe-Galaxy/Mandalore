@@ -1,7 +1,6 @@
-import { RoleType, StatusType } from 'src/user/types';
+import { StatusType } from 'src/user/types';
 
 interface UserResponse {
-  role: RoleType;
   status: StatusType;
 }
 
