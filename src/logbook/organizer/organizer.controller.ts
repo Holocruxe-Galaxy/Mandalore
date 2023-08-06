@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { OrganizerService } from './organizer.service';
 import { CreateOrganizerDto } from './dto/create-organizer.dto';
 import { UpdateOrganizerDto } from './dto/update-organizer.dto';
 
-@Controller('organizer')
+@Controller()
 export class OrganizerController {
   constructor(private readonly organizerService: OrganizerService) {}
 
@@ -23,7 +31,10 @@ export class OrganizerController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrganizerDto: UpdateOrganizerDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateOrganizerDto: UpdateOrganizerDto,
+  ) {
     return this.organizerService.update(+id, updateOrganizerDto);
   }
 

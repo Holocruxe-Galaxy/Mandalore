@@ -118,8 +118,8 @@ export class UserService {
     }
   }
 
-  update(email: UserKey, data: object) {
-    const response = this.userModel.findOneAndUpdate(email, data);
+  async update(email: UserKey, data: object) {
+    await this.userModel.findOneAndUpdate(email, data);
   }
 
   remove(id: number) {

@@ -4,6 +4,6 @@ import { OrganizerController } from './organizer.controller';
 
 @Module({
   controllers: [OrganizerController],
-  providers: [OrganizerService]
+  providers: [OrganizerService],
 })
 export class OrganizerModule {}
