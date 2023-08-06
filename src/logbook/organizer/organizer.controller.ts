@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { OrganizerService } from './organizer.service';
-import { CreateOrganizerDto } from './dto/create-organizer.dto';
+import { OrganizerDto } from './dto/organizer.dto';
 import { UpdateOrganizerDto } from './dto/update-organizer.dto';
 
 @Controller()
@@ -16,8 +16,8 @@ export class OrganizerController {
   constructor(private readonly organizerService: OrganizerService) {}
 
   @Post()
-  create(@Body() createOrganizerDto: CreateOrganizerDto) {
-    return this.organizerService.create(createOrganizerDto);
+  create(@Body() organizerDto: OrganizerDto) {
+    return this.organizerService.addToOrganizer(organizerDto);
   }
 
   @Get()

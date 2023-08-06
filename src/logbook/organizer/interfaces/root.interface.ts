@@ -1,5 +1,5 @@
 export interface Root {
-  deletedAt: Date;
+  deletedAt?: Date;
 }
 
 export interface TitledRoot extends Root {

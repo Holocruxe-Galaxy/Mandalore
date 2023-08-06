@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
-
-import { Note } from '../interfaces/note.interface';
-import { Task } from '../interfaces/tasks.interface';
+import { Note, Task } from '../interfaces';
 
 @Schema({ timestamps: true })
 export class Organizer extends Document {
@@ -12,7 +10,7 @@ export class Organizer extends Document {
   @Prop({ type: SchemaTypes.Mixed })
   notes: Note[];
 
-  @Prop()
+  @Prop({ type: SchemaTypes.Mixed })
   tasks: Task[];
 }
 
