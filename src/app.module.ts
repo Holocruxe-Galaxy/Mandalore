@@ -11,6 +11,7 @@ import { HttpModule } from '@nestjs/axios';
 import { DiaryModule } from './diary/diary.module';
 import { ChatModule } from './chat/chat.module';
 import { AuthModule } from './auth/auth.module';
+import { LogbookModule } from './logbook/logbook.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     DiaryModule,
     ChatModule,
+    LogbookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
