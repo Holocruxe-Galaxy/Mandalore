@@ -94,14 +94,18 @@ export class UserService {
     }
   }
 
+  private addMockData(user: Pending | Complete) {
+    return { ...user };
+  }
+
   // It picks the data requested in findOne()
   // its result depends on whether the user completed the form or not.
-  private dataPicker({ role, status, ...user }: User): Pending | Complete {
-    if (status === 'PENDING') return { role, status, step: user.step };
+  private dataPicker({ status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { status, step: user.step };
     else if (status === 'COMPLETE') {
       // const { country } = user.location[0];
 
-      return { role, status };
+      return { status };
     }
   }
 
