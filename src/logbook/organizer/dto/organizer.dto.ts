@@ -8,10 +8,10 @@ export class OrganizerDto {
   @IsOptional()
   @Type(() => NoteDto)
   @ValidateNested()
-  note: Note;
+  notes: Note;
 
   @IsOptional()
   @Type(() => TaskDto)
   @ValidateNested()
-  task: Task;
+  tasks: Task;
 }

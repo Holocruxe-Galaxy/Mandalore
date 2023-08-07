@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,21 +17,38 @@ export class OrganizerService {
     private readonly organizerModel: Model<Organizer>,
   ) {}
 
-  private async create(user: string) {
+  private async create() {
+    const { email: user } = this.request.user;
     await this.organizerModel.create({ user });
   }
 
-  async addToOrganizer(organizerDto: OrganizerDto) {
+  async addToOrganizerManager(organizerDto: OrganizerDto) {
+    try {
+      const organizer: Organizer[] = [];
+
+      for (const key in organizerDto) {
+        organizer.push(await this.addToOrganizer(key, organizerDto));
+      }
+      return organizer.pop();
+    } catch (error) {
+      this.create();
+      return this.addToOrganizerManager(organizerDto);
+    }
+  }
+
+  private async addToOrganizer(key: string, data: OrganizerDto) {
     const { email: user } = this.request.user;
     const organizer = await this.organizerModel.findOneAndUpdate(
       { user },
-      { testing: true },
+      {
+        $push: {
+          [key]: { ...data[key], createdAt: new Date() },
+        },
+      },
+      { new: true },
     );
-
-    if (!organizer) {
-      this.create(user);
-      return this.addToOrganizer(organizerDto);
-    }
+    console.log(data);
+    if (!organizer) throw new Error('No organizer in database.');
     return organizer;
   }
 

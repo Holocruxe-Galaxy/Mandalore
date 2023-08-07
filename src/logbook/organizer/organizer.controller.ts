@@ -17,7 +17,7 @@ export class OrganizerController {
 
   @Post()
   create(@Body() organizerDto: OrganizerDto) {
-    return this.organizerService.addToOrganizer(organizerDto);
+    return this.organizerService.addToOrganizerManager(organizerDto);
   }
 
   @Get()

@@ -1,4 +1,5 @@
 export interface Root {
+  createdAt: Date;
   deletedAt?: Date;
 }
 
