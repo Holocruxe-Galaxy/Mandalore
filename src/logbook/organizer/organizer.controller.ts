@@ -8,8 +8,9 @@ import {
   Delete,
 } from '@nestjs/common';
 import { OrganizerService } from './organizer.service';
-import { OrganizerDto } from './dto/organizer.dto';
-import { UpdateOrganizerDto } from './dto/update-organizer.dto';
+import { OrganizerDto, UpdateOrganizerDto } from './dto';
+import { ParseParamPipe } from './pipes';
+import { OrganizerParamsType } from './types';
 
 @Controller()
 export class OrganizerController {
@@ -20,14 +21,9 @@ export class OrganizerController {
     return this.organizerService.addToOrganizerManager(organizerDto);
   }
 
-  @Get()
-  findAll() {
-    return this.organizerService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.organizerService.findOne(+id);
+  @Get(':prop')
+  findAll(@Param('prop', ParseParamPipe) prop: OrganizerParamsType) {
+    return this.organizerService.findAll(prop);
   }
 
   @Patch()
@@ -35,8 +31,11 @@ export class OrganizerController {
     return this.organizerService.updateDataManager(updateOrganizerDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.organizerService.remove(+id);
+  @Delete(':prop')
+  remove(
+    @Param('prop', ParseParamPipe) prop: OrganizerParamsType,
+    @Body() updateOrganizerDto: UpdateOrganizerDto,
+  ) {
+    return this.organizerService.remove(prop, updateOrganizerDto);
   }
 }

@@ -1,14 +1,14 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { OrganizerDto } from './dto/organizer.dto';
-import { UpdateOrganizerDto } from './dto/update-organizer.dto';
+import { OrganizerDto, UpdateOrganizerDto } from './dto';
 import { RequestWidhUser } from 'src/common/interfaces';
 
 import { Organizer } from './schemas';
-import { UpdateNoteDto, UpdateTaskDto } from './dto';
+import { OrganizerDtosType, OrganizerParamsType } from './types';
+import { Note, Task } from './interfaces';
 
 @Injectable()
 export class OrganizerService {
@@ -53,8 +53,12 @@ export class OrganizerService {
     return organizer;
   }
 
-  findAll() {
-    return `This action returns all organizer`;
+  async findAll(prop: OrganizerParamsType) {
+    const { email: user } = this.request.user;
+
+    const entrances = await this.organizerModel.findOne({ user }).select(prop);
+
+    return (entrances[prop] as any).filter((e: any) => !e.deletedAt);
   }
 
   findOne(id: number) {
@@ -72,7 +76,7 @@ export class OrganizerService {
     return organizer;
   }
 
-  private async update(key: string, updateOrganizerDto: UpdateOrganizerDto) {
+  private async update(key: string, updateOrganizerDto: OrganizerDtosType) {
     const { email: user } = this.request.user;
     const fields = this.updateFieldsManager(key, updateOrganizerDto[key]);
 
@@ -85,16 +89,26 @@ export class OrganizerService {
     return toUpdate;
   }
 
-  updateFieldsManager(property: string, data: UpdateNoteDto | UpdateTaskDto) {
+  updateFieldsManager(property: string, data: OrganizerDtosType) {
     const fields: any = {};
 
     for (const key in data) {
       fields[`${property}.$.${key}`] = data[key];
     }
+
     return fields;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} organizer`;
+  async remove(
+    prop: OrganizerParamsType,
+    updateOrganizerDto: UpdateOrganizerDto,
+  ) {
+    const deletionDto = {
+      createdAt: updateOrganizerDto.createdAt,
+      [prop]: { deletedAt: new Date() },
+    };
+    await this.update(prop, deletionDto);
+
+    return `The ${prop} has been deleted successfully!`;
   }
 }
