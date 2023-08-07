@@ -30,12 +30,9 @@ export class OrganizerController {
     return this.organizerService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateOrganizerDto: UpdateOrganizerDto,
-  ) {
-    return this.organizerService.update(+id, updateOrganizerDto);
+  @Patch()
+  update(@Body() updateOrganizerDto: UpdateOrganizerDto) {
+    return this.organizerService.updateDataManager(updateOrganizerDto);
   }
 
   @Delete(':id')

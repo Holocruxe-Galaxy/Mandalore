@@ -1,4 +1,22 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { OrganizerDto } from './organizer.dto';
+import { IsDate, IsOptional, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { UpdateNoteDto } from './note.dto';
+import { UpdateTaskDto } from './task.dto';
 
-export class UpdateOrganizerDto extends PartialType(OrganizerDto) {}
+import { Note, Task } from '../interfaces';
+
+export class UpdateOrganizerDto {
+  @IsOptional()
+  @Type(() => UpdateNoteDto)
+  @ValidateNested()
+  notes: Note;
+
+  @IsOptional()
+  @Type(() => UpdateTaskDto)
+  @ValidateNested()
+  tasks: Task;
+
+  @Type(() => Date)
+  @IsDate()
+  createdAt: Date;
+}

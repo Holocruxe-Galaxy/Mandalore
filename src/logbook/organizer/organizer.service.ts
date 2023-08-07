@@ -8,6 +8,7 @@ import { UpdateOrganizerDto } from './dto/update-organizer.dto';
 import { RequestWidhUser } from 'src/common/interfaces';
 
 import { Organizer } from './schemas';
+import { UpdateNoteDto, UpdateTaskDto } from './dto';
 
 @Injectable()
 export class OrganizerService {
@@ -60,8 +61,37 @@ export class OrganizerService {
     return `This action returns a #${id} organizer`;
   }
 
-  update(id: number, updateOrganizerDto: UpdateOrganizerDto) {
-    return `This action updates a #${id} organizer`;
+  async updateDataManager(updateOrganizerDto: UpdateOrganizerDto) {
+    const organizer: Organizer[] = [];
+
+    for (const key in updateOrganizerDto) {
+      if (key !== 'createdAt')
+        organizer.push(await this.update(key, updateOrganizerDto));
+    }
+
+    return organizer;
+  }
+
+  private async update(key: string, updateOrganizerDto: UpdateOrganizerDto) {
+    const { email: user } = this.request.user;
+    const fields = this.updateFieldsManager(key, updateOrganizerDto[key]);
+
+    const toUpdate = await this.organizerModel.findOneAndUpdate(
+      { user, [`${key}.createdAt`]: updateOrganizerDto.createdAt },
+      { $set: fields },
+      { new: true },
+    );
+
+    return toUpdate;
+  }
+
+  updateFieldsManager(property: string, data: UpdateNoteDto | UpdateTaskDto) {
+    const fields: any = {};
+
+    for (const key in data) {
+      fields[`${property}.$.${key}`] = data[key];
+    }
+    return fields;
   }
 
   remove(id: number) {
