@@ -8,7 +8,6 @@ import { RequestWidhUser } from 'src/common/interfaces';
 
 import { Organizer } from './schemas';
 import { OrganizerDtosType, OrganizerParamsType } from './types';
-import { Note, Task } from './interfaces';
 
 @Injectable()
 export class OrganizerService {
