@@ -83,7 +83,7 @@ export class OrganizerService {
         organizer.push(await this.update(key, updateOrganizerDto));
     }
 
-    return organizer;
+    return 'Updated successfully!';
   }
 
   private async update(key: string, updateOrganizerDto: OrganizerDtosType) {

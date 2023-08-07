@@ -1,6 +1,12 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 class StepDto {
   @IsString()
@@ -11,7 +17,7 @@ class StepDto {
   done: boolean;
 }
 
-class UpdateStepDto extends PartialType(StepDto) {
+class UpdateStepDto extends OmitType(StepDto, ['done'] as const) {
   @IsBoolean()
   done: boolean;
 }
@@ -22,12 +28,16 @@ export class TaskDto {
 
   @IsArray()
   @Type(() => StepDto)
+  @ValidateNested()
   steps: StepDto[];
 }
 
-export class UpdateTaskDto extends OmitType(TaskDto, ['steps'] as const) {
+export class UpdateTaskDto extends PartialType(
+  OmitType(TaskDto, ['steps'] as const),
+) {
   @IsOptional()
   @IsArray()
   @Type(() => UpdateStepDto)
+  @ValidateNested()
   steps: UpdateStepDto[];
 }
