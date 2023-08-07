@@ -31,7 +31,7 @@ export class OrganizerService {
       }
       return organizer.pop();
     } catch (error) {
-      this.create();
+      await this.create();
       return this.addToOrganizerManager(organizerDto);
     }
   }
@@ -47,7 +47,7 @@ export class OrganizerService {
       },
       { new: true },
     );
-    console.log(data);
+
     if (!organizer) throw new Error('No organizer in database.');
     return organizer;
   }
