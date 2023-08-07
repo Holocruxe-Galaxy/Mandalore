@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
 
 import { NoteDto, TaskDto } from './';
-import { Note, Task } from '../interfaces';
+import { Note } from '../interfaces';
 
 export class OrganizerDto {
   @IsOptional()
@@ -13,5 +13,5 @@ export class OrganizerDto {
   @IsOptional()
   @Type(() => TaskDto)
   @ValidateNested()
-  tasks: Task;
+  tasks: TaskDto;
 }

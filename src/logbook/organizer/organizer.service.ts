@@ -38,6 +38,8 @@ export class OrganizerService {
 
   private async addToOrganizer(key: string, data: OrganizerDto) {
     const { email: user } = this.request.user;
+
+    const modifiedData = this.caseModifier(key, data);
     const organizer = await this.organizerModel.findOneAndUpdate(
       { user },
       {
@@ -50,6 +52,15 @@ export class OrganizerService {
 
     if (!organizer) throw new Error('No organizer in database.');
     return organizer;
+  }
+
+  private caseModifier(key: string, dto: OrganizerDto) {
+    if (key === 'notes') return dto;
+    if (key === 'tasks') {
+      for (const step of dto[key].steps) {
+        step.done = false;
+      }
+    }
   }
 
   async findAll(prop: OrganizerParamsType) {

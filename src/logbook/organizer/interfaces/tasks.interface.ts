@@ -1,6 +1,6 @@
 import { TitledRoot } from '.';
 
-interface Step {
+export interface Step {
   name: string;
   done: boolean;
 }
