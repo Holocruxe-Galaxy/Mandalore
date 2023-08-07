@@ -29,7 +29,7 @@ export class OrganizerService {
       for (const key in organizerDto) {
         organizer.push(await this.addToOrganizer(key, organizerDto));
       }
-      return organizer.pop();
+      return 'Added successfully!';
     } catch (error) {
       await this.create();
       return this.addToOrganizerManager(organizerDto);
@@ -39,7 +39,7 @@ export class OrganizerService {
   private async addToOrganizer(key: string, data: OrganizerDto) {
     const { email: user } = this.request.user;
 
-    const modifiedData = this.caseModifier(key, data);
+    this.caseModifier(key, data);
     const organizer = await this.organizerModel.findOneAndUpdate(
       { user },
       {
@@ -55,7 +55,7 @@ export class OrganizerService {
   }
 
   private caseModifier(key: string, dto: OrganizerDto) {
-    if (key === 'notes') return dto;
+    if (key === 'notes') return;
     if (key === 'tasks') {
       for (const step of dto[key].steps) {
         step.done = false;
