@@ -94,19 +94,32 @@ export class UserService {
     }
   }
 
+  mockUserData() {
+    return {
+      userName: 'Panchito',
+      birthdate: '02/29/2000',
+      province: 'Buenos Aires',
+      country: 'Argentina',
+      telephone: 'AR+541112345678',
+      email: 'email@mail.com',
+      language: 'Spanish',
+      state: 'COMPLETE',
+    };
+  }
+
   // It picks the data requested in findOne()
   // its result depends on whether the user completed the form or not.
-  private dataPicker({ role, status, ...user }: User): Pending | Complete {
-    if (status === 'PENDING') return { role, status, step: user.step };
+  private dataPicker({ status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { status, step: user.step };
     else if (status === 'COMPLETE') {
       // const { country } = user.location[0];
 
-      return { role, status };
+      return { status };
     }
   }
 
-  update(email: UserKey, data: object) {
-    const response = this.userModel.findOneAndUpdate(email, data);
+  async update(email: UserKey, data: object) {
+    await this.userModel.findOneAndUpdate(email, data);
   }
 
   remove(id: number) {
