@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -76,10 +76,14 @@ export class OrganizerService {
   }
 
   async updateDataManager({ data }: UpdateOrganizerDto) {
-    data.map(async (element) => {
-      for (const key in element) {
-        if (key !== 'createdAt') return await this.update(key, element);
-      }
+    await Promise.all(
+      data.map(async (element) => {
+        for (const key in element) {
+          if (key !== 'createdAt') return await this.update(key, element);
+        }
+      }),
+    ).catch((error) => {
+      throw new BadRequestException(error.message);
     });
 
     return 'Updated successfully!';
@@ -95,6 +99,8 @@ export class OrganizerService {
       { new: true },
     );
 
+    if (!toUpdate) throw new Error('Item not found! Please try again later.');
+
     return toUpdate;
   }
 
@@ -109,12 +115,17 @@ export class OrganizerService {
   }
 
   async remove(prop: OrganizerParamsType, { data }: UpdateOrganizerDto) {
-    data.map(async (element) => {
-      const deletionDto = {
-        createdAt: element.createdAt,
-        [prop]: { deletedAt: new Date() },
-      };
-      await this.update(prop, deletionDto);
+    await Promise.all(
+      data.map(async (element) => {
+        const deletionDto = {
+          createdAt: element.createdAt,
+          [prop]: { deletedAt: new Date() },
+        };
+
+        await this.update(prop, deletionDto);
+      }),
+    ).catch((error) => {
+      throw new BadRequestException(error.message);
     });
 
     return `Deleted successfully!`;
