@@ -15,7 +15,7 @@ import { UpdateDiaryDto } from './dto/update-diary.dto';
 
 import { ParseObjectIdPipe } from 'src/common/pipes';
 
-@Controller('diary')
+@Controller()
 export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
 
