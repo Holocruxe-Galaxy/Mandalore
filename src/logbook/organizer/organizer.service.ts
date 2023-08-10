@@ -108,15 +108,15 @@ export class OrganizerService {
     return fields;
   }
 
-  async remove(
-    prop: OrganizerParamsType,
-    updateOrganizerDto: UpdateOrganizerDto,
-  ) {
-    // const deletionDto = {
-    //   createdAt: updateOrganizerDto.createdAt,
-    //   [prop]: { deletedAt: new Date() },
-    // };
-    // await this.update(prop, deletionDto);
-    // return `The ${prop} has been deleted successfully!`;
+  async remove(prop: OrganizerParamsType, { data }: UpdateOrganizerDto) {
+    data.map(async (element) => {
+      const deletionDto = {
+        createdAt: element.createdAt,
+        [prop]: { deletedAt: new Date() },
+      };
+      await this.update(prop, deletionDto);
+    });
+
+    return `Deleted successfully!`;
   }
 }
