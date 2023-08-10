@@ -8,9 +8,6 @@ export class FinancesDto {
   @IsNumber()
   spendings: number;
 
-  @IsNumber()
-  result: number;
-
   @IsString()
   description: string;
 }
