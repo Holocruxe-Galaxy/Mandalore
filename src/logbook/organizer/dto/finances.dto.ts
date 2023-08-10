@@ -2,14 +2,14 @@ import { PartialType } from '@nestjs/mapped-types';
 import { IsNumber, IsString } from 'class-validator';
 
 export class FinancesDto {
-  @IsString()
-  title: string;
-
   @IsNumber()
   initialBalance: number;
 
   @IsNumber()
   spendings: number;
+
+  @IsNumber()
+  result: number;
 
   @IsString()
   description: string;

@@ -1,20 +1,22 @@
 import { IsArray, IsDate, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UpdateNoteDto } from './note.dto';
-import { UpdateTaskDto } from './task.dto';
-
-import { Note, Task } from '../interfaces';
+import { UpdateFinancesDto, UpdateNoteDto, UpdateTaskDto } from './';
 
 export class UpdateDtos {
   @IsOptional()
   @Type(() => UpdateNoteDto)
   @ValidateNested()
-  notes: Note;
+  notes: UpdateNoteDto;
 
   @IsOptional()
   @Type(() => UpdateTaskDto)
   @ValidateNested()
-  tasks: Task;
+  tasks: UpdateTaskDto;
+
+  @IsOptional()
+  @Type(() => UpdateFinancesDto)
+  @ValidateNested()
+  finances: UpdateFinancesDto;
 
   @Type(() => Date)
   @IsDate()

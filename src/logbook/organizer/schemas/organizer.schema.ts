@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
-import { Note, Task } from '../interfaces';
+import { Finances, Note, Task } from '../interfaces';
 
 @Schema({ timestamps: true })
 export class Organizer extends Document {
@@ -12,6 +12,9 @@ export class Organizer extends Document {
 
   @Prop({ type: SchemaTypes.Mixed })
   tasks: Task[];
+
+  @Prop({ type: SchemaTypes.Mixed })
+  finances: Finances[];
 }
 
 export const OrganizerSchema = SchemaFactory.createForClass(Organizer);

@@ -1,14 +1,13 @@
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
 
-import { NoteDto, TaskDto } from './';
-import { Note } from '../interfaces';
+import { FinancesDto, NoteDto, TaskDto } from './';
 
 export class OrganizerDto {
   @IsOptional()
   @Type(() => NoteDto)
   @ValidateNested()
-  notes: Note;
+  notes: NoteDto;
 
   @IsOptional()
   @Type(() => TaskDto)
@@ -16,7 +15,7 @@ export class OrganizerDto {
   tasks: TaskDto;
 
   @IsOptional()
-  @Type(() => TaskDto)
+  @Type(() => FinancesDto)
   @ValidateNested()
-  finances: TaskDto;
+  finances: FinancesDto;
 }
