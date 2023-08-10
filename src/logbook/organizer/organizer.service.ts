@@ -75,13 +75,12 @@ export class OrganizerService {
     return `This action returns a #${id} organizer`;
   }
 
-  async updateDataManager(updateOrganizerDto: UpdateOrganizerDto) {
-    const organizer: Organizer[] = [];
-
-    for (const key in updateOrganizerDto) {
-      if (key !== 'createdAt')
-        organizer.push(await this.update(key, updateOrganizerDto));
-    }
+  async updateDataManager({ data }: UpdateOrganizerDto) {
+    data.map(async (element) => {
+      for (const key in element) {
+        if (key !== 'createdAt') return await this.update(key, element);
+      }
+    });
 
     return 'Updated successfully!';
   }
@@ -113,12 +112,11 @@ export class OrganizerService {
     prop: OrganizerParamsType,
     updateOrganizerDto: UpdateOrganizerDto,
   ) {
-    const deletionDto = {
-      createdAt: updateOrganizerDto.createdAt,
-      [prop]: { deletedAt: new Date() },
-    };
-    await this.update(prop, deletionDto);
-
-    return `The ${prop} has been deleted successfully!`;
+    // const deletionDto = {
+    //   createdAt: updateOrganizerDto.createdAt,
+    //   [prop]: { deletedAt: new Date() },
+    // };
+    // await this.update(prop, deletionDto);
+    // return `The ${prop} has been deleted successfully!`;
   }
 }

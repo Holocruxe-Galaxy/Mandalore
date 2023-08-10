@@ -14,4 +14,9 @@ export class OrganizerDto {
   @Type(() => TaskDto)
   @ValidateNested()
   tasks: TaskDto;
+
+  @IsOptional()
+  @Type(() => TaskDto)
+  @ValidateNested()
+  finances: TaskDto;
 }

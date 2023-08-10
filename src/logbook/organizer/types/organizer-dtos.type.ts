@@ -1,9 +1,5 @@
-import { UpdateOrganizerDto } from '../dto';
-
-// interface OrganizerWithDelete extends UpdateOrganizerDto {
-//   deletedAt?: Date;
-// }
+import { UpdateDtos } from '../dto';
 
 export type OrganizerDtosType = {
-  [K in keyof UpdateOrganizerDto]?: UpdateOrganizerDto[K];
+  [K in keyof UpdateDtos]?: UpdateDtos[K];
 };
