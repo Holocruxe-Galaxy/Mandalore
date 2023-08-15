@@ -2,7 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
 
 import { StatusType } from '../types';
-import { ContactInfo, Location, Personal, Professional } from '../interfaces';
+import {
+  ContactInfo,
+  GeneralInterests,
+  Location,
+  Personal,
+  Professional,
+} from '../interfaces';
 import { Chat } from 'src/chat/schemas';
 
 @Schema()
@@ -33,6 +39,11 @@ export class User extends Document {
     type: SchemaTypes.Mixed,
   })
   professional: Professional;
+
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  generalInterests: GeneralInterests;
 
   @Prop({
     type: SchemaTypes.ObjectId,

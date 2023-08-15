@@ -1,8 +1,5 @@
 import { IsIn, IsNumber, IsString } from 'class-validator';
-import {
-  EducationLevelType,
-  educationLevel,
-} from 'src/user/types/properties/education-level.type';
+import { EducationLevelType, educationLevel } from 'src/user/types';
 
 export class ProfessionalDto {
   @IsIn(educationLevel)
