@@ -1,6 +1,11 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsIn, IsString } from 'class-validator';
-import { civilStatus, gender } from 'src/user/types';
+import {
+  CivilStatusType,
+  GenderType,
+  civilStatus,
+  gender,
+} from 'src/user/types';
 
 export class PersonalDto {
   @IsString()
@@ -10,12 +15,15 @@ export class PersonalDto {
   lastName: string;
 
   @IsIn(gender)
-  gender: string;
+  gender: GenderType;
 
   @Type(() => Date)
   @IsDate()
   birthdate: Date;
 
   @IsIn(civilStatus)
-  civilStatus: string;
+  civilStatus: CivilStatusType;
+
+  @IsString()
+  language: string;
 }
