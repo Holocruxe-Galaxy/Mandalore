@@ -8,6 +8,7 @@ export class LocationDto {
   provinceOrState: string;
 
   @IsOptional()
+  @IsString()
   city: string;
 
   @IsOptional()
