@@ -39,7 +39,8 @@ export class UserService {
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      const status: StatusType = prop === 'personal' ? 'COMPLETE' : null;
+      const status: StatusType =
+        prop === 'generalInterests' ? 'COMPLETE' : null;
 
       const data: UserProperty = this.addCompleteStatus(step, status);
 
