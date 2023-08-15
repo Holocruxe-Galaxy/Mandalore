@@ -7,4 +7,8 @@ export class CreateDiaryDto {
   @IsOptional()
   @IsString()
   emoji: string;
+
+  @IsOptional()
+  @IsString()
+  photo: string;
 }

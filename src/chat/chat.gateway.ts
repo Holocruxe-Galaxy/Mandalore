@@ -32,6 +32,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const email: UserKey = await this.authService.isUser(token);
 
       this.chatService.registerClient(client, email);
+
+      client.emit('connection', { id: client.id });
     } catch (error) {
       client.emit('exception', [error.message]);
       client.disconnect();
