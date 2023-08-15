@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class CreateDiaryDto {
   @IsString()
@@ -9,6 +9,7 @@ export class CreateDiaryDto {
   emoji: string;
 
   @IsOptional()
-  @IsString()
-  photo: string;
+  @IsArray()
+  @IsString({ each: true })
+  photos: string[];
 }

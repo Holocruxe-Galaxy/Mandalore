@@ -13,7 +13,7 @@ export class Diary extends Document {
   emoji: string;
 
   @Prop()
-  photo: string;
+  photos: string[];
 
   @Prop({ default: false })
   favorite: boolean;
