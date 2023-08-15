@@ -1,8 +1,8 @@
-export const gender = [
+export const educationLevel = [
   'ELEMENTARY_SCHOOL',
   'MIDDLE_SCHOOL',
   'HIGH_SCHOOL',
   'COLLEGE',
 ] as const;
 
-export type GenderType = (typeof gender)[number];
+export type EducationLevelType = (typeof educationLevel)[number];

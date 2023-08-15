@@ -10,6 +10,7 @@ export class LocationDto {
   @IsOptional()
   city: string;
 
+  @IsOptional()
   @IsString()
   address: string;
 }

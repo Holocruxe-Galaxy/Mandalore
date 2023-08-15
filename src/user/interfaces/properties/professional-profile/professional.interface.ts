@@ -1,3 +1,4 @@
+import { EducationLevelType } from 'src/user/types/properties/education-level.type';
 // import { Institution } from './';
 
 // export interface Professional {
@@ -7,7 +8,7 @@
 // }
 
 export interface Professional {
-  educationalLevel: string;
+  educationalLevel: EducationLevelType;
   graduationYear: number;
   academicField: string;
   occupation: string;

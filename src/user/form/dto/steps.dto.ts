@@ -1,8 +1,14 @@
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
 
-import { ContactInfo, Location, Personal } from 'src/user/interfaces';
+import {
+  ContactInfo,
+  Location,
+  Personal,
+  Professional,
+} from 'src/user/interfaces';
 import { ContactInfoDto, LocationDto, PersonalDto } from './';
+import { ProfessionalDto } from './professional.dto';
 
 export class StepsDto {
   @IsOptional()
@@ -19,4 +25,9 @@ export class StepsDto {
   @Type(() => PersonalDto)
   @ValidateNested()
   personal: Personal;
+
+  @IsOptional()
+  @Type(() => ProfessionalDto)
+  @ValidateNested()
+  professional: Professional;
 }
