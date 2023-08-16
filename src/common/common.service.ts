@@ -9,4 +9,12 @@ export class CommonService {
   isDtoKey<T>(p: string, dto: unknown, dtoModel: any): dto is T {
     return p in dtoModel;
   }
+
+  formatDate(date: Date) {
+    return new Intl.DateTimeFormat('sp-AG', {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      timeZone: 'America/Buenos_Aires',
+    }).format(date);
+  }
 }
