@@ -3,17 +3,21 @@ import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 
-import { Diary } from './schemas';
+import { Diary, DiaryDocument } from './schemas';
 
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 import { RequestWidhUser } from 'src/common/interfaces';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class DiaryService {
   constructor(
     @InjectModel(Diary.name)
     private readonly diaryModel: Model<Diary>,
+
+    @Inject(CommonService)
+    private commonService: CommonService,
 
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
@@ -24,10 +28,20 @@ export class DiaryService {
     return await this.diaryModel.create({ ...createDiaryDto, user });
   }
 
-  async findAll(): Promise<Diary[]> {
+  async findAll() {
     const { email: user } = this.request.user;
 
-    return await this.diaryModel.find({ user, deletedAt: null });
+    const diaryEntries: DiaryDocument[] = await this.diaryModel.find({
+      user,
+      deletedAt: null,
+    });
+
+    return diaryEntries.map((entry) => {
+      return {
+        ...entry.toObject(),
+        createdAt: this.commonService.formatDate(entry.createdAt as Date),
+      };
+    });
   }
 
   findOne(id: number) {
