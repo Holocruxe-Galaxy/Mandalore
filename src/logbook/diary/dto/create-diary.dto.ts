@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreateDiaryDto {
   @IsString()
@@ -12,4 +12,7 @@ export class CreateDiaryDto {
   @IsArray()
   @IsString({ each: true })
   photos: string[];
+
+  @IsBoolean()
+  favorite: boolean;
 }
