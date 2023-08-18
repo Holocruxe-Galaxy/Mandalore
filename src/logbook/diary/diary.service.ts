@@ -31,10 +31,12 @@ export class DiaryService {
   async findAll() {
     const { email: user } = this.request.user;
 
-    const diaryEntries: DiaryDocument[] = await this.diaryModel.find({
-      user,
-      deletedAt: null,
-    });
+    const diaryEntries: DiaryDocument[] = (await this.diaryModel
+      .find({
+        user,
+        deletedAt: null,
+      })
+      .sort({ createdAt: -1 })) as DiaryDocument[];
 
     return diaryEntries.map((entry) => {
       return {
