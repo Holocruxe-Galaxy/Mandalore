@@ -23,8 +23,7 @@ export class Diary extends Document {
 }
 
 export const DiarySchema = SchemaFactory.createForClass(Diary);
-export type DiaryDocument = Diary &
-  Document & {
-    createdAt: Date | string;
-    updatedAt: Date;
-  };
+export type DiaryDocument = Diary & {
+  createdAt: Date | string;
+  updatedAt: Date;
+};
