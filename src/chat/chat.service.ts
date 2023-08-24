@@ -58,7 +58,7 @@ export class ChatService {
   }
 
   async clientChat(message: string, client: Socket) {
-    const chat = await this.manageChat(client.id, { message });
+    const chat = await this.manageChat(client.id, { message, id: client.id });
 
     return chat;
   }
