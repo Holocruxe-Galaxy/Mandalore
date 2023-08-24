@@ -29,12 +29,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.headers.authorization;
+      console.log('1', token);
       const email: UserKey = await this.authService.isUser(token);
-
+      console.log('2', email);
       this.chatService.registerClient(client, email);
-
+      console.log('3');
       client.emit('connection', { id: client.id });
+      console.log('4');
     } catch (error) {
+      console.log('5', error);
       client.emit('exception', [error.message]);
       client.disconnect();
     }
