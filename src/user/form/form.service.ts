@@ -21,7 +21,7 @@ export class FormService {
 
     for (const step in stepsDto) {
       const dto = { [step]: stepsDto[step] };
-      if (this.commonService.isDtoKey(step, dto, stepsDto))
+      if (this.commonService.isDtoKey<StepsDto>(step, dto, stepsDto))
         steps.push(this.userService.stepFollower(dto));
     }
     const results = await Promise.all(steps);

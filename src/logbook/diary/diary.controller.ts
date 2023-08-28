@@ -7,14 +7,15 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ObjectId } from 'mongoose';
+
 import { DiaryService } from './diary.service';
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 
-import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id';
-import { ObjectId } from 'mongoose';
+import { ParseObjectIdPipe } from 'src/common/pipes';
 
-@Controller('diary')
+@Controller()
 export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
 

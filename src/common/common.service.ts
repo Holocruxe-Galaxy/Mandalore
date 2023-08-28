@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { StepsDto } from 'src/user/form/dto';
-import { StepMap } from 'src/user/form/types';
 
 @Injectable()
 export class CommonService {
@@ -8,7 +6,15 @@ export class CommonService {
     return prop !== null;
   }
 
-  isDtoKey(p: string, dto: unknown, stepsDto: StepsDto): dto is StepMap {
-    return p in stepsDto;
+  isDtoKey<T>(p: string, dto: unknown, dtoModel: any): dto is T {
+    return p in dtoModel;
+  }
+
+  formatDate(date: Date) {
+    return new Intl.DateTimeFormat('sp-AG', {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      timeZone: 'America/Buenos_Aires',
+    }).format(date);
   }
 }

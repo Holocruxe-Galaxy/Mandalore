@@ -12,6 +12,9 @@ export class Diary extends Document {
   @Prop()
   emoji: string;
 
+  @Prop()
+  photos: string[];
+
   @Prop({ default: false })
   favorite: boolean;
 
@@ -20,3 +23,7 @@ export class Diary extends Document {
 }
 
 export const DiarySchema = SchemaFactory.createForClass(Diary);
+export type DiaryDocument = Diary & {
+  createdAt: Date | string;
+  updatedAt: Date;
+};

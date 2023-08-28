@@ -8,7 +8,9 @@ import { CommonModule } from './common/common.module';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { HttpModule } from '@nestjs/axios';
-import { DiaryModule } from './diary/diary.module';
+import { ChatModule } from './chat/chat.module';
+import { AuthModule } from './auth/auth.module';
+import { LogbookModule } from './logbook/logbook.module';
 
 @Module({
   imports: [
@@ -23,14 +25,16 @@ import { DiaryModule } from './diary/diary.module';
     ConfigModule,
     HttpModule,
     CommonModule,
+    AuthModule,
     UserModule,
-    DiaryModule,
+    ChatModule,
+    LogbookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('user', 'diary');
+    consumer.apply(LoggerMiddleware).exclude('/').forRoutes('*');
   }
 }

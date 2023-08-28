@@ -6,13 +6,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
 
-import { RequestWidhUser } from 'src/common/interfaces';
+import { RequestWidhUser, UserKey } from 'src/common/interfaces';
 import { Complete, Pending, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
@@ -20,6 +21,9 @@ import { StepMap } from './form/types';
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
+    @Inject(forwardRef(() => ConfigService))
+    private configService: ConfigService,
+
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
 
@@ -39,17 +43,22 @@ export class UserService {
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      const status: StatusType = prop === 'personal' ? 'COMPLETE' : null;
+      let status: StatusType;
 
-      const data: UserProperty = this.stepHelper(step, status);
+      const TEST = this.configService.get('TESTING');
 
-      return this.addFormProp(data);
+      if (TEST) status = prop === 'personal' ? 'COMPLETE' : null;
+      else status = prop === 'generalInterests' ? 'COMPLETE' : null;
+
+      const data: UserProperty = this.addCompleteStatus(step, status);
+
+      return this.addFormStepToUser(data);
     } catch (error) {
       console.log(error);
     }
   }
 
-  private async addFormProp(data: UserProperty) {
+  private async addFormStepToUser(data: UserProperty) {
     const user = this.request.user;
 
     const response = await this.userModel.findOneAndUpdate(
@@ -70,7 +79,10 @@ export class UserService {
 
   // If the user status should be changed to 'COMPLETE',
   // it adds said property to the object that will update the user.
-  stepHelper(prop: StepMap, status: StatusType | null): UserProperty {
+  private addCompleteStatus(
+    prop: StepMap,
+    status: StatusType | null,
+  ): UserProperty {
     if (status === null) return prop;
     return { ...prop, status };
   }
@@ -91,15 +103,32 @@ export class UserService {
     }
   }
 
+  mockUserData() {
+    return {
+      userName: 'Panchito',
+      birthdate: '02/29/2000',
+      province: 'Buenos Aires',
+      country: 'Argentina',
+      telephone: 'AR+541112345678',
+      email: 'email@mail.com',
+      language: 'Spanish',
+      state: 'COMPLETE',
+    };
+  }
+
   // It picks the data requested in findOne()
   // its result depends on whether the user completed the form or not.
-  private dataPicker({ role, status, ...user }: User): Pending | Complete {
-    if (status === 'PENDING') return { role, status, step: user.step };
+  private dataPicker({ status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { status, step: user.step };
     else if (status === 'COMPLETE') {
       // const { country } = user.location[0];
 
-      return { role, status };
+      return { status };
     }
+  }
+
+  async update(email: UserKey, data: object) {
+    await this.userModel.findOneAndUpdate(email, data);
   }
 
   remove(id: number) {
