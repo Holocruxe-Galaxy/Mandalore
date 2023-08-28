@@ -14,4 +14,7 @@ export class LocationDto {
   @IsOptional()
   @IsString()
   address: string;
+
+  @IsString()
+  language: string;
 }
