@@ -23,7 +23,4 @@ export class PersonalDto {
 
   @IsIn(civilStatus)
   civilStatus: CivilStatusType;
-
-  @IsString()
-  language: string;
 }
