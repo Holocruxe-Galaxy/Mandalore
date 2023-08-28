@@ -6,6 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -20,6 +21,9 @@ import { StepMap } from './form/types';
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
+    @Inject(forwardRef(() => ConfigService))
+    private configService: ConfigService,
+
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
 
@@ -39,8 +43,12 @@ export class UserService {
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      const status: StatusType =
-        prop === 'generalInterests' ? 'COMPLETE' : null;
+      let status: StatusType;
+
+      const TEST = this.configService.get('TESTING');
+
+      if (TEST) status = prop === 'personal' ? 'COMPLETE' : null;
+      else status = prop === 'generalInterests' ? 'COMPLETE' : null;
 
       const data: UserProperty = this.addCompleteStatus(step, status);
 
