@@ -47,12 +47,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('broadcast')
   async broadCast(
     @MessageBody(new ParseSocketContent()) createMessageDto: CreateMessageDto,
-    @ConnectedSocket() client: Socket,
   ) {
-    this.server.emit(
-      'broadcast',
-      await this.chatService.broadcast(createMessageDto.message, client),
-    );
+    const connectedClients = await this.server.fetchSockets();
+
+    for (const connectedClient of connectedClients) {
+      connectedClient.emit(
+        'broadcast',
+        await this.chatService.broadcast(
+          createMessageDto.message,
+          connectedClient,
+        ),
+      );
+    }
   }
 
   @SubscribeMessage('clientChat')
