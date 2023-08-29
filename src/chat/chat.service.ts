@@ -49,6 +49,16 @@ export class ChatService {
   }
 
   async broadcast(message: string, client: Socket) {
+    const allClients = this.connectedClients;
+
+    for (const connectedClient in allClients) {
+      connectedClient === client.id ||
+        (await this.manageChat(connectedClient, {
+          message,
+          isBroadcasted: true,
+        }));
+    }
+
     const chat = await this.manageChat(client.id, {
       message,
       isBroadcasted: true,
