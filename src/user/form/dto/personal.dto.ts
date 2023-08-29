@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsIn, IsString } from 'class-validator';
+import { IsDate, IsIn, IsOptional, IsString } from 'class-validator';
 import {
   CivilStatusType,
   GenderType,
@@ -11,6 +11,7 @@ export class PersonalDto {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsString()
   lastName: string;
 
