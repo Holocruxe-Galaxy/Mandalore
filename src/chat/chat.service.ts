@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Socket } from 'socket.io';
+import { RemoteSocket, Socket } from 'socket.io';
 import { Model } from 'mongoose';
 
 import { ConnectedClients, Message } from './interfaces';
 import { UserKey } from 'src/common/interfaces';
 import { Chat } from './schemas';
 import { User } from 'src/user/schemas';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 @Injectable()
 export class ChatService {
@@ -48,17 +49,10 @@ export class ChatService {
     return Object.keys(this.connectedClients).length;
   }
 
-  async broadcast(message: string, client: Socket) {
-    const allClients = this.connectedClients;
-
-    for (const connectedClient in allClients) {
-      connectedClient === client.id ||
-        (await this.manageChat(connectedClient, {
-          message,
-          isBroadcasted: true,
-        }));
-    }
-
+  async broadcast(
+    message: string,
+    client: RemoteSocket<DefaultEventsMap, any>,
+  ) {
     const chat = await this.manageChat(client.id, {
       message,
       isBroadcasted: true,
