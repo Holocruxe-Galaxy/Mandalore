@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
@@ -9,6 +14,7 @@ import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 import { RequestWidhUser } from 'src/common/interfaces';
 import { CommonService } from 'src/common/common.service';
+import { ImagesService } from 'src/common/images/images.service';
 
 @Injectable()
 export class DiaryService {
@@ -18,6 +24,9 @@ export class DiaryService {
 
     @Inject(CommonService)
     private commonService: CommonService,
+
+    @Inject(ImagesService)
+    private imagesService: ImagesService,
 
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
@@ -52,16 +61,19 @@ export class DiaryService {
 
   async update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
     try {
+      await this.checkIfAuthorizedUser(id);
       return await this.diaryModel.findByIdAndUpdate(id, updateDiaryDto, {
         new: true,
       });
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handleExceptions(error);
     }
   }
 
   async remove(id: ObjectId) {
     try {
+      await this.checkIfAuthorizedUser(id);
+
       await this.diaryModel.findByIdAndUpdate(
         id,
         { deletedAt: new Date() },
@@ -70,7 +82,35 @@ export class DiaryService {
 
       return 'Entry deleted successfully.';
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handleExceptions(error);
     }
+  }
+
+  async addPhotosToDiaryEntry(id: ObjectId, photo: Express.Multer.File) {
+    try {
+      const entry = await this.checkIfAuthorizedUser(id);
+      const photos = await this.imagesService.uploadManager(photo, id);
+
+      await entry.updateOne({ $push: { photos } });
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+  }
+
+  private async checkIfAuthorizedUser(id: ObjectId) {
+    const { email: user } = this.request.user;
+    const entry = await this.diaryModel.findById(id);
+    if (entry.user !== user)
+      throw new UnauthorizedException(
+        'The entry you are trying to modify is not yours.',
+      );
+
+    return entry;
+  }
+
+  private handleExceptions(error: any): never {
+    if (error.name === 'UnauthorizedException')
+      throw new UnauthorizedException(error.message);
+    throw new BadRequestException(error.message);
   }
 }
