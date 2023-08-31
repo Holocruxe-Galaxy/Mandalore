@@ -50,6 +50,19 @@ export class ImagesService {
     }
   }
 
+  async findOne(imageName: string) {
+    const command = new GetObjectCommand({
+      Bucket: this.configService.get('AWS_S3_BUCKET_NAME'),
+      Key: imageName,
+    });
+
+    const url = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 60 * 60 * 2,
+    });
+
+    return url;
+  }
+
   private async uploadPhoto(photo: Express.Multer.File, params: PhotoParams) {
     const command = new PutObjectCommand(params);
     await this.s3Client.send(command);

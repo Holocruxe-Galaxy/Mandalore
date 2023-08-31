@@ -47,12 +47,21 @@ export class DiaryService {
       })
       .sort({ createdAt: -1 })) as DiaryDocument[];
 
-    return diaryEntries.map((entry) => {
-      return {
+    const responseEntries: DiaryDocument[] = [];
+
+    for (const entry of diaryEntries) {
+      const photos = entry.photos.length
+        ? await this.imagesService.findOne(entry.photos[0]).then((res) => [res])
+        : [];
+
+      responseEntries.push({
         ...entry.toObject(),
+        photos,
         createdAt: this.commonService.formatDate(entry.createdAt as Date),
-      };
-    });
+      } as DiaryDocument);
+    }
+
+    return responseEntries;
   }
 
   findOne(id: number) {
