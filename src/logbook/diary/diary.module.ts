@@ -6,6 +6,7 @@ import { DiaryController } from './diary.controller';
 
 import { Diary, DiarySchema } from './schemas';
 import { CommonModule } from 'src/common/common.module';
+import { ImagesModule } from 'src/common/images/images.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CommonModule } from 'src/common/common.module';
       },
     ]),
     CommonModule,
+    ImagesModule,
   ],
   controllers: [DiaryController],
   providers: [DiaryService],
