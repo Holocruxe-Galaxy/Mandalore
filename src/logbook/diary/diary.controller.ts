@@ -40,11 +40,15 @@ export class DiaryController {
   findAll() {
     return this.diaryService.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.diaryService.findOne(+id);
+  @Get('/entry/:id')
+  findOne(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+    return this.diaryService.findOne(id);
   }
+
+  // @Get(':id')
+  // findUserEntry(@Param('id', ParseObjectIdPipe) id: ObjectId) {
+  //   return this.diaryService.findOne(id);
+  // }
 
   @Patch(':id')
   update(
