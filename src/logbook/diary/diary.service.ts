@@ -64,8 +64,8 @@ export class DiaryService {
     return responseEntries;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} diary`;
+  async findOne(id: ObjectId) {
+    return await this.diaryModel.findById(id);
   }
 
   async update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
