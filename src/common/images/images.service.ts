@@ -24,12 +24,10 @@ export class ImagesService {
 
   private s3Client = new S3Client({
     credentials: {
-      accessKeyId: this.configService.get('MANDALORE_AWS_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get(
-        'MANDALORE_AWS_SECRET_ACCESS_KEY',
-      ),
+      accessKeyId: this.configService.get('ACCESS_KEY_ID_AWS'),
+      secretAccessKey: this.configService.get('SECRET_KEY_AWS'),
     },
-    region: this.configService.get('MANDALORE_AWS_S3_BUCKET_REGION'),
+    region: this.configService.get('BUCKET_REGION'),
   });
 
   async uploadManager(
@@ -40,7 +38,7 @@ export class ImagesService {
       const imageName = this.nameFormatter('post', id, photo.originalname);
 
       await this.uploadPhoto(photo, {
-        Bucket: this.configService.get('MANDALORE_AWS_S3_BUCKET_NAME'),
+        Bucket: this.configService.get('S3_BUCKET_NAME'),
         Key: imageName,
         Body: photo.buffer,
         ContentType: photo.mimetype,
@@ -54,7 +52,7 @@ export class ImagesService {
 
   async findOne(imageName: string) {
     const command = new GetObjectCommand({
-      Bucket: this.configService.get('MANDALORE_AWS_S3_BUCKET_NAME'),
+      Bucket: this.configService.get('S3_BUCKET_NAME'),
       Key: imageName,
     });
 
