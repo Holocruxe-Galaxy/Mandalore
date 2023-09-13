@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, SchemaTypes } from 'mongoose';
-import { User } from 'src/user/schemas';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Notification extends Document {
@@ -10,10 +9,8 @@ export class Notification extends Document {
   @Prop({ default: true })
   email: boolean;
 
-  @Prop({
-    type: SchemaTypes.ObjectId,
-  })
-  user: User;
+  @Prop({ required: true })
+  user: string;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
