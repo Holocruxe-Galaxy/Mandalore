@@ -65,7 +65,18 @@ export class DiaryService {
   }
 
   async findOne(id: ObjectId) {
-    return await this.diaryModel.findById(id);
+    const entry: DiaryDocument = await this.diaryModel.findById(id);
+    if (!entry?.photos?.length) return entry;
+
+    const photos = await this.imagesService
+      .findOne(entry.photos[0])
+      .then((res) => [res]);
+
+    return {
+      ...entry.toObject(),
+      photos,
+      createdAt: this.commonService.formatDate(entry.createdAt as Date),
+    };
   }
 
   async update(id: ObjectId, updateDiaryDto: UpdateDiaryDto) {
