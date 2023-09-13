@@ -17,6 +17,7 @@ import { RequestWidhUser, UserKey } from 'src/common/interfaces';
 import { Complete, Pending, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
+import { NotificationsService } from 'src/settings/notifications/notifications.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -30,12 +31,18 @@ export class UserService {
     @Inject(forwardRef(() => CommonService))
     private commonService: CommonService,
 
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
+
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
 
   async create() {
     const email = this.request.user;
-    return await this.userModel.create(email);
+    const user = await this.userModel.create(email);
+
+    this.notificationsService.create(email);
+    return user;
   }
 
   // It's called from FormService. It recieves a single user property
