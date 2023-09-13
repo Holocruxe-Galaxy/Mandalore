@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -14,6 +14,7 @@ import { FormModule } from './form/form.module';
 import { User, UserSchema } from './schemas';
 
 import { routes } from './routes';
+import { NotificationsModule } from 'src/settings/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { routes } from './routes';
     HttpModule,
     CommonModule,
     FormModule,
+    forwardRef(() => NotificationsModule),
     RouterModule.register(routes),
   ],
   controllers: [UserController],
