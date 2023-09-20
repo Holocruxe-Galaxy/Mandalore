@@ -19,24 +19,24 @@ export class NotificationsService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
   ) {}
-  async create(user: UserKey) {
-    return await this.notificationModel.create(user);
+  async create(user: string) {
+    return await this.notificationModel.create({ user });
   }
 
   async update(updateNotificationDto: UpdateNotificationDto) {
-    const exists = await this.findOne();
-
-    if (!exists) {
-      const email = this.request.user;
-      const newOptions = await this.create(email);
-      return newOptions.updateOne(updateNotificationDto);
-    }
-    return exists.updateOne(updateNotificationDto);
+    const { email: user } = this.request.user;
+    return await this.notificationModel.findOneAndUpdate(
+      { user },
+      updateNotificationDto,
+      { new: true },
+    );
   }
 
-  private async findOne(): Promise<Notification> {
-    const user = this.request.user;
+  async findOne(): Promise<Notification> {
+    const { email: user } = this.request.user;
+    const exists = await this.notificationModel.findOne({ user });
 
-    return await this.notificationModel.findOne(user);
+    if (!exists) return await this.create(user);
+    return exists;
   }
 }
