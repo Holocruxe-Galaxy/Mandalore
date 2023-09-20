@@ -41,7 +41,7 @@ export class UserService {
     const email = this.request.user;
     const user = await this.userModel.create(email);
 
-    this.notificationsService.create(email);
+    this.notificationsService.create(email.email);
     return user;
   }
 
