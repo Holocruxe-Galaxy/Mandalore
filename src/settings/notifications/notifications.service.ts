@@ -34,7 +34,7 @@ export class NotificationsService {
     return exists.updateOne(updateNotificationDto);
   }
 
-  private async findOne(): Promise<Notification> {
+  async findOne(): Promise<Notification> {
     const user = this.request.user;
 
     return await this.notificationModel.findOne(user);
