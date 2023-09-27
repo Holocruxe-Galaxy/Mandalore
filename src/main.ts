@@ -20,11 +20,10 @@ async function bootstrap() {
     .setTitle('First Example')
     .setDescription('This is a mere example')
     .setVersion('0.1')
-    .addTag('first')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   const LOCAL = configService.get<string>('LOCAL');
   const FRONTEND = configService.get<string>('FRONT_URL');
