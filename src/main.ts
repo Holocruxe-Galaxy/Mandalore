@@ -25,6 +25,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
+  const PORT = configService.get<string>('PORT');
   const LOCAL = configService.get<string>('LOCAL');
   const FRONTEND = configService.get<string>('FRONT_URL');
 
@@ -44,6 +45,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe(validationOptions));
 
-  await app.listen(3001);
+  await app.listen(PORT);
 }
 bootstrap();
