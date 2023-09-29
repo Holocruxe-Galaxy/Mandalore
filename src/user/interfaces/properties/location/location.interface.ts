@@ -5,5 +5,6 @@ export interface Location {
   provinceOrState: string;
   city: string;
   address: string;
+  language: string;
   dailyTravelling?: DailyTravelling;
 }

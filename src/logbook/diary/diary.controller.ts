@@ -9,6 +9,8 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
 
 import { DiaryService } from './diary.service';
@@ -16,8 +18,8 @@ import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 
 import { ParseObjectIdPipe } from 'src/common/pipes';
-import { FileInterceptor } from '@nestjs/platform-express';
 
+@ApiTags('Logbook - Diary')
 @Controller()
 export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
