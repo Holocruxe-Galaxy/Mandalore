@@ -25,13 +25,6 @@ export class UserController {
     return this.userService.findOne();
   }
 
-  @Get()
-  find() {
-    // Should return an object with the properties:
-    // Status, Role, Country
-    return this.userService.mockUserData();
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
