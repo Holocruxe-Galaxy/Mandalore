@@ -9,5 +9,6 @@ export interface ProfileData {
   email: string;
   language: string;
   status: StatusType;
+  step?: number;
   city?: string;
 }

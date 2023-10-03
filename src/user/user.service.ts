@@ -98,6 +98,8 @@ export class UserService {
     try {
       const email = this.request.user;
       const user: User = await this.userModel.findOne(email).lean();
+      const status = this.dataPicker(user);
+
       const profileData: ProfileData = {
         name: user.personal.name,
         email: user.contactInfo.email,
@@ -106,7 +108,7 @@ export class UserService {
         country: user.location.country,
         provinceOrState: user.location.provinceOrState,
         language: user.location.language,
-        status: user.status,
+        ...status,
         ...(user.location.city && { city: user.location.city }),
       };
 
@@ -120,11 +122,7 @@ export class UserService {
   // its result depends on whether the user completed the form or not.
   private dataPicker({ status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { status, step: user.step };
-    else if (status === 'COMPLETE') {
-      // const { country } = user.location[0];
-
-      return { status };
-    }
+    if (status === 'COMPLETE') return { status };
   }
 
   async update(email: UserKey, data: object) {
