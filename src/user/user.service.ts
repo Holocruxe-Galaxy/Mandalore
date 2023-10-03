@@ -102,7 +102,7 @@ export class UserService {
 
       const profileData: ProfileData = {
         name: user.personal.name,
-        email: user.contactInfo.email,
+        email: email.email,
         phone: user.contactInfo.phone,
         birthdate: user.personal.birthdate,
         country: user.location.country,
