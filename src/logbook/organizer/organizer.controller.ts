@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { OrganizerService } from './organizer.service';
 import { OrganizerDto, UpdateOrganizerDto } from './dto';
 import { ParseParamPipe } from './pipes';
 import { OrganizerParamsType } from './types';
 
+@ApiTags('Logbook - Organizer')
 @Controller()
 export class OrganizerController {
   constructor(private readonly organizerService: OrganizerService) {}

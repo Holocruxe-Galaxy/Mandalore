@@ -3,6 +3,7 @@ import { ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const validationOptions: ValidationPipeOptions = {
   whitelist: true,
@@ -15,6 +16,16 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
+  const config = new DocumentBuilder()
+    .setTitle('First Example')
+    .setDescription('This is a mere example')
+    .setVersion('0.1')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
+  const PORT = configService.get<string>('PORT');
   const LOCAL = configService.get<string>('LOCAL');
   const FRONTEND = configService.get<string>('FRONT_URL');
 
@@ -34,6 +45,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe(validationOptions));
 
-  await app.listen(3001);
+  await app.listen(PORT);
 }
 bootstrap();

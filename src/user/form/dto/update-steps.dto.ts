@@ -1,10 +1,11 @@
+import { PartialType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
 
 import {
   ContactInfo,
   GeneralInterests,
-  Location,
   Personal,
   Professional,
 } from 'src/user/interfaces';
@@ -15,35 +16,34 @@ import {
   PersonalDto,
   ProfessionalDto,
 } from './';
-import { ApiProperty } from '@nestjs/swagger';
 
-export class StepsDto {
+export class UpdateStepsDto {
   @IsOptional()
-  @Type(() => ContactInfoDto)
+  @Type(() => PartialType(ContactInfoDto))
   @ValidateNested()
   @ApiProperty()
   contactInfo: ContactInfo;
 
   @IsOptional()
-  @Type(() => GeneralInterestsDto)
+  @Type(() => PartialType(GeneralInterestsDto))
   @ValidateNested()
   @ApiProperty()
   generalInterests: GeneralInterests;
 
   @IsOptional()
-  @Type(() => LocationDto)
+  @Type(() => PartialType(LocationDto))
   @ValidateNested()
   @ApiProperty()
-  location: Location;
+  location: LocationDto;
 
   @IsOptional()
-  @Type(() => PersonalDto)
+  @Type(() => PartialType(PersonalDto))
   @ValidateNested()
   @ApiProperty()
   personal: Personal;
 
   @IsOptional()
-  @Type(() => ProfessionalDto)
+  @Type(() => PartialType(ProfessionalDto))
   @ValidateNested()
   @ApiProperty()
   professional: Professional;

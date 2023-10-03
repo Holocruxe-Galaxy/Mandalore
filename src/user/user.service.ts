@@ -14,7 +14,7 @@ import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
 
 import { RequestWidhUser, UserKey } from 'src/common/interfaces';
-import { Complete, Pending, Select } from './interfaces';
+import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
 import { NotificationsService } from 'src/settings/notifications/notifications.service';
@@ -50,12 +50,8 @@ export class UserService {
   async stepFollower(step: StepMap): Promise<User> {
     try {
       const prop = Object.keys(step)[0];
-      let status: StatusType;
-
-      const TEST = this.configService.get('TESTING');
-
-      if (TEST) status = prop === 'personal' ? 'COMPLETE' : null;
-      else status = prop === 'generalInterests' ? 'COMPLETE' : null;
+      const status: StatusType =
+        prop === 'generalInterests' ? 'COMPLETE' : null;
 
       const data: UserProperty = this.addCompleteStatus(step, status);
 
@@ -101,37 +97,32 @@ export class UserService {
   async findOne() {
     try {
       const email = this.request.user;
-      const user: User = await this.userModel.findOne(email);
+      const user: User = await this.userModel.findOne(email).lean();
+      const status = this.dataPicker(user);
 
-      return this.dataPicker(user.toObject());
+      const profileData: ProfileData = {
+        name: user.personal.name,
+        email: user.contactInfo.email,
+        phone: user.contactInfo.phone,
+        birthdate: user.personal.birthdate,
+        country: user.location.country,
+        provinceOrState: user.location.provinceOrState,
+        language: user.location.language,
+        ...status,
+        ...(user.location.city && { city: user.location.city }),
+      };
+
+      return profileData;
     } catch (error) {
-      const user = await this.create();
-      return this.dataPicker(user.toObject());
+      console.log(error);
     }
-  }
-
-  mockUserData() {
-    return {
-      userName: 'Panchito',
-      birthdate: '02/29/2000',
-      province: 'Buenos Aires',
-      country: 'Argentina',
-      telephone: 'AR+541112345678',
-      email: 'email@mail.com',
-      language: 'Spanish',
-      state: 'COMPLETE',
-    };
   }
 
   // It picks the data requested in findOne()
   // its result depends on whether the user completed the form or not.
   private dataPicker({ status, ...user }: User): Pending | Complete {
     if (status === 'PENDING') return { status, step: user.step };
-    else if (status === 'COMPLETE') {
-      // const { country } = user.location[0];
-
-      return { status };
-    }
+    if (status === 'COMPLETE') return { status };
   }
 
   async update(email: UserKey, data: object) {

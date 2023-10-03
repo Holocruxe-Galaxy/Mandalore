@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Param, Delete, Scope } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 
+@ApiTags('User')
 @Controller({ path: 'user', scope: Scope.REQUEST })
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,13 +23,6 @@ export class UserController {
     // Should return an object with the properties:
     // Status, Role, Country
     return this.userService.findOne();
-  }
-
-  @Get()
-  find() {
-    // Should return an object with the properties:
-    // Status, Role, Country
-    return this.userService.mockUserData();
   }
 
   @Delete(':id')
