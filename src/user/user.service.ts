@@ -100,6 +100,8 @@ export class UserService {
       const user: User = await this.userModel.findOne(email).lean();
       const status = this.dataPicker(user);
 
+      if (status.status === 'PENDING') return status;
+
       const profileData: ProfileData = {
         name: user.personal.name,
         email: email.email,
