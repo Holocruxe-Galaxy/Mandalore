@@ -12,12 +12,13 @@ import { Model } from 'mongoose';
 
 import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
+import { NotificationsService } from 'src/settings/notifications/notifications.service';
 
-import { RequestWidhUser, UserKey } from 'src/common/interfaces';
+import { RequestWidhUser } from 'src/common/interfaces';
 import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
-import { NotificationsService } from 'src/settings/notifications/notifications.service';
+import { UpdateStepsDto } from './form/dto/update-steps.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -127,10 +128,19 @@ export class UserService {
     return { ...prop, status };
   }
 
-  async update(step: StepMap) {
+  async update(steps: UpdateStepsDto) {
     const user = this.request.user;
+    const updates = [];
 
-    // await this.userModel.findOneAndUpdate(user, step);
+    const data = await this.userModel.findOne(user);
+
+    for (const prop in steps) {
+      updates.push(
+        data.updateOne({ [prop]: { ...data[prop], ...steps[prop] } }),
+      );
+    }
+
+    await Promise.all(updates);
   }
 
   remove(id: number) {

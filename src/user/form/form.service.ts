@@ -5,6 +5,7 @@ import { UserService } from '../user.service';
 import { CommonService } from 'src/common/common.service';
 
 import { User } from '../schemas';
+import { UpdateStepsDto } from './dto/update-steps.dto';
 
 @Injectable()
 export class FormService {
@@ -29,16 +30,16 @@ export class FormService {
     return results.pop();
   }
 
-  async updateUserData(stepsDto: StepsDto) {
-    const steps: Promise<User>[] = [];
+  async updateUserData(stepsDto: UpdateStepsDto) {
+    const properties: UpdateStepsDto = {} as UpdateStepsDto;
 
-    for (const step in stepsDto) {
-      const dto = { [step]: stepsDto[step] };
-      if (this.commonService.isDtoKey<StepsDto>(step, dto, stepsDto))
-        steps.push(this.userService.stepFollower(dto));
+    for (const prop in stepsDto) {
+      const dto = { [prop]: stepsDto[prop] };
+      if (this.commonService.isDtoKey<UpdateStepsDto>(prop, dto, stepsDto))
+        properties[prop] = stepsDto[prop];
     }
-    const results = await Promise.all(steps);
 
-    return results.pop();
+    await this.userService.update(properties);
+    return 'Ok';
   }
 }
