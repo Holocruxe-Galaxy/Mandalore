@@ -17,6 +17,6 @@ export class FormController {
 
   @Patch('step')
   async updateStepForm(@Body() data: UpdateStepsDto) {
-    return this.formService.stepManager(data);
+    return this.formService.updateUserData(data);
   }
 }

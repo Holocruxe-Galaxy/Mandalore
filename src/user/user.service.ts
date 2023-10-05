@@ -12,12 +12,13 @@ import { Model } from 'mongoose';
 
 import { User } from './schemas';
 import { CommonService } from 'src/common/common.service';
+import { NotificationsService } from 'src/settings/notifications/notifications.service';
 
-import { RequestWidhUser, UserKey } from 'src/common/interfaces';
+import { RequestWidhUser } from 'src/common/interfaces';
 import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
-import { NotificationsService } from 'src/settings/notifications/notifications.service';
+import { UpdateStepsDto } from './form/dto/update-steps.dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -43,6 +44,43 @@ export class UserService {
 
     this.notificationsService.create(email.email);
     return user;
+  }
+
+  async findAll(): Promise<Select[]> {
+    return await this.userModel.find().select(select);
+  }
+
+  async findOne() {
+    try {
+      const email = this.request.user;
+      const user: User = await this.userModel.findOne(email).lean();
+      const status = this.dataPicker(user);
+
+      if (status.status === 'PENDING') return status;
+
+      const profileData: ProfileData = {
+        name: user.personal.name,
+        email: email.email,
+        phone: user.contactInfo.phone,
+        birthdate: user.personal.birthdate,
+        country: user.location.country,
+        provinceOrState: user.location.provinceOrState,
+        language: user.location.language,
+        ...status,
+        ...(user.location.city && { city: user.location.city }),
+      };
+
+      return profileData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // It picks the data requested in findOne()
+  // its result depends on whether the user completed the form or not.
+  private dataPicker({ status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { status, step: user.step };
+    if (status === 'COMPLETE') return { status };
   }
 
   // It's called from FormService. It recieves a single user property
@@ -90,45 +128,19 @@ export class UserService {
     return { ...prop, status };
   }
 
-  async findAll(): Promise<Select[]> {
-    return await this.userModel.find().select(select);
-  }
+  async update(steps: UpdateStepsDto) {
+    const user = this.request.user;
+    const updates = [];
 
-  async findOne() {
-    try {
-      const email = this.request.user;
-      const user: User = await this.userModel.findOne(email).lean();
-      const status = this.dataPicker(user);
+    const data = await this.userModel.findOne(user);
 
-      if (status.status === 'PENDING') return status;
-
-      const profileData: ProfileData = {
-        name: user.personal.name,
-        email: email.email,
-        phone: user.contactInfo.phone,
-        birthdate: user.personal.birthdate,
-        country: user.location.country,
-        provinceOrState: user.location.provinceOrState,
-        language: user.location.language,
-        ...status,
-        ...(user.location.city && { city: user.location.city }),
-      };
-
-      return profileData;
-    } catch (error) {
-      console.log(error);
+    for (const prop in steps) {
+      updates.push(
+        data.updateOne({ [prop]: { ...data[prop], ...steps[prop] } }),
+      );
     }
-  }
 
-  // It picks the data requested in findOne()
-  // its result depends on whether the user completed the form or not.
-  private dataPicker({ status, ...user }: User): Pending | Complete {
-    if (status === 'PENDING') return { status, step: user.step };
-    if (status === 'COMPLETE') return { status };
-  }
-
-  async update(email: UserKey, data: object) {
-    await this.userModel.findOneAndUpdate(email, data);
+    await Promise.all(updates);
   }
 
   remove(id: number) {
