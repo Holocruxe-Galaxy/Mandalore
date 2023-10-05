@@ -28,4 +28,17 @@ export class FormService {
 
     return results.pop();
   }
+
+  async updateUserData(stepsDto: StepsDto) {
+    const steps: Promise<User>[] = [];
+
+    for (const step in stepsDto) {
+      const dto = { [step]: stepsDto[step] };
+      if (this.commonService.isDtoKey<StepsDto>(step, dto, stepsDto))
+        steps.push(this.userService.stepFollower(dto));
+    }
+    const results = await Promise.all(steps);
+
+    return results.pop();
+  }
 }
