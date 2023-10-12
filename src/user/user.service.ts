@@ -93,9 +93,7 @@ export class UserService {
 
       const data: UserProperty = this.addCompleteStatus(step, status);
 
-      const user = this.request.user;
-      const oldData = await this.userModel.findOne(user);
-      const newStep = this.getStepNumber(oldData, prop);
+      const newStep = await this.getStepNumber(prop);
 
       return await this.addFormStepToUser({ ...data, step: newStep });
     } catch (error) {
@@ -119,7 +117,10 @@ export class UserService {
     return response;
   }
 
-  private getStepNumber(user: User, prop: string) {
+  private async getStepNumber(prop: string) {
+    const email = this.request.user;
+    const user = await this.userModel.findOne(email);
+
     if (user[prop]) return user.step;
     if (
       (prop === 'contactInfo' || prop === 'location') &&
