@@ -93,7 +93,11 @@ export class UserService {
 
       const data: UserProperty = this.addCompleteStatus(step, status);
 
-      return this.addFormStepToUser(data);
+      const user = this.request.user;
+      const oldData = await this.userModel.findOne(user);
+      const newStep = this.getStepNumber(oldData, prop);
+
+      return await this.addFormStepToUser({ ...data, step: newStep });
     } catch (error) {
       console.log(error);
     }
@@ -104,10 +108,7 @@ export class UserService {
 
     const response = await this.userModel.findOneAndUpdate(
       user,
-      {
-        ...data,
-        $inc: { step: +1 },
-      },
+      { ...data },
       { new: true },
     );
 
@@ -116,6 +117,19 @@ export class UserService {
         `The user with the email ${user.email} does not exist in core database.`,
       );
     return response;
+  }
+
+  private getStepNumber(user: User, prop: string) {
+    if (user[prop]) return user.step;
+    if (
+      (prop === 'contactInfo' || prop === 'location') &&
+      !user.contactInfo &&
+      !user.location
+    ) {
+      return user.step + 1;
+    }
+    if (!user[prop]) return user.step + 1;
+    return user.step;
   }
 
   // If the user status should be changed to 'COMPLETE',
