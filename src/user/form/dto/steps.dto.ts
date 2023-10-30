@@ -1,13 +1,5 @@
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
-
-import {
-  ContactInfo,
-  GeneralInterests,
-  Location,
-  Personal,
-  Professional,
-} from 'src/user/interfaces';
 import {
   ContactInfoDto,
   GeneralInterestsDto,
@@ -15,36 +7,46 @@ import {
   PersonalDto,
   ProfessionalDto,
 } from './';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  contactInfoExample,
+  generalInterestsExample,
+  locationExample,
+  personalExample,
+  professionalExample,
+} from '../examples';
 
 export class StepsDto {
   @IsOptional()
   @Type(() => ContactInfoDto)
   @ValidateNested()
-  @ApiProperty()
-  contactInfo: ContactInfo;
+  @ApiPropertyOptional({ type: ContactInfoDto, example: contactInfoExample })
+  contactInfo?: ContactInfoDto;
 
   @IsOptional()
   @Type(() => GeneralInterestsDto)
   @ValidateNested()
-  @ApiProperty()
-  generalInterests: GeneralInterests;
+  @ApiPropertyOptional({
+    type: GeneralInterestsDto,
+    example: generalInterestsExample,
+  })
+  generalInterests?: GeneralInterestsDto;
 
   @IsOptional()
   @Type(() => LocationDto)
   @ValidateNested()
-  @ApiProperty()
-  location: Location;
+  @ApiPropertyOptional({ type: LocationDto, example: locationExample })
+  location?: LocationDto;
 
   @IsOptional()
   @Type(() => PersonalDto)
   @ValidateNested()
-  @ApiProperty()
-  personal: Personal;
+  @ApiPropertyOptional({ type: PersonalDto, example: personalExample })
+  personal?: PersonalDto;
 
   @IsOptional()
   @Type(() => ProfessionalDto)
   @ValidateNested()
-  @ApiProperty()
-  professional: Professional;
+  @ApiPropertyOptional({ type: ProfessionalDto, example: professionalExample })
+  professional?: ProfessionalDto;
 }
