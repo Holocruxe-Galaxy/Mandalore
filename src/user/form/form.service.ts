@@ -1,11 +1,10 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { StepsDto } from './dto/steps.dto';
+import { StepsDto, UpdateStepsDto } from './dto';
 
 import { UserService } from '../user.service';
 import { CommonService } from 'src/common/common.service';
 
 import { User } from '../schemas';
-import { UpdateStepsDto } from './dto/update-steps.dto';
 
 @Injectable()
 export class FormService {

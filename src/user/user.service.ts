@@ -18,7 +18,7 @@ import { RequestWidhUser } from 'src/common/interfaces';
 import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
-import { UpdateStepsDto } from './form/dto/update-steps.dto';
+import { UpdateStepsDto } from './form/dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -144,18 +144,22 @@ export class UserService {
   }
 
   async update(steps: UpdateStepsDto) {
-    const user = this.request.user;
-    const updates = [];
+    try {
+      const user = this.request.user;
+      const updates = [];
 
-    const data = await this.userModel.findOne(user);
+      const data = await this.userModel.findOne(user);
 
-    for (const prop in steps) {
-      updates.push(
-        data.updateOne({ [prop]: { ...data[prop], ...steps[prop] } }),
-      );
+      for (const prop in steps) {
+        updates.push(
+          data.updateOne({ [prop]: { ...data[prop], ...steps[prop] } }),
+        );
+      }
+
+      await Promise.all(updates);
+    } catch (error) {
+      console.log(error);
     }
-
-    await Promise.all(updates);
   }
 
   remove(id: number) {

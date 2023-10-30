@@ -1,50 +1,64 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
-
-import {
-  ContactInfo,
-  GeneralInterests,
-  Personal,
-  Professional,
-} from 'src/user/interfaces';
 import {
   ContactInfoDto,
   GeneralInterestsDto,
   LocationDto,
+  PartialContactInfoDto,
+  PartialGeneralInterestsDto,
+  PartialLocationDto,
+  PartialPersonalDto,
+  PartialProfessionalDto,
   PersonalDto,
   ProfessionalDto,
 } from './';
+import {
+  contactInfoExample,
+  generalInterestsExample,
+  locationExample,
+  personalExample,
+  professionalExample,
+} from '../examples';
 
 export class UpdateStepsDto {
   @IsOptional()
   @Type(() => PartialType(ContactInfoDto))
   @ValidateNested()
-  @ApiProperty()
-  contactInfo: ContactInfo;
+  @ApiPropertyOptional({
+    type: PartialContactInfoDto,
+    example: contactInfoExample,
+  })
+  contactInfo?: PartialContactInfoDto;
 
   @IsOptional()
   @Type(() => PartialType(GeneralInterestsDto))
   @ValidateNested()
-  @ApiProperty()
-  generalInterests: GeneralInterests;
+  @ApiPropertyOptional({
+    type: PartialGeneralInterestsDto,
+    example: generalInterestsExample,
+  })
+  generalInterests?: GeneralInterestsDto;
 
   @IsOptional()
   @Type(() => PartialType(LocationDto))
   @ValidateNested()
-  @ApiProperty()
-  location: LocationDto;
+  @ApiPropertyOptional({ type: PartialLocationDto, example: locationExample })
+  location?: PartialLocationDto;
 
   @IsOptional()
   @Type(() => PartialType(PersonalDto))
   @ValidateNested()
-  @ApiProperty()
-  personal: Personal;
+  @ApiPropertyOptional({ type: PartialPersonalDto, example: personalExample })
+  personal?: PartialPersonalDto;
 
   @IsOptional()
   @Type(() => PartialType(ProfessionalDto))
   @ValidateNested()
-  @ApiProperty()
-  professional: Professional;
+  @ApiPropertyOptional({
+    type: PartialProfessionalDto,
+    example: professionalExample,
+  })
+  professional?: PartialProfessionalDto;
 }

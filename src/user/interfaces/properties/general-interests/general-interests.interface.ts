@@ -1,5 +1,5 @@
-import { generalInterestsType } from 'src/user/types';
+import { GeneralInterestsType } from 'src/user/types';
 
 export interface GeneralInterests {
-  likes: generalInterestsType[];
+  likes: GeneralInterestsType[];
 }
