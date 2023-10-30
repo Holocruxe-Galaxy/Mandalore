@@ -1,8 +1,7 @@
 import { Controller, Post, Body, HttpCode, Patch } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FormService } from './form.service';
-import { StepsDto } from './dto';
-import { UpdateStepsDto } from './dto/update-steps.dto';
+import { StepsDto, UpdateStepsDto } from './dto';
 
 @ApiTags('User - Form')
 @Controller()

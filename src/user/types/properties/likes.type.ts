@@ -18,4 +18,4 @@ export const generalInterests = [
   'PSYCHOLOGY',
 ] as const;
 
-export type generalInterestsType = (typeof generalInterests)[number];
+export type GeneralInterestsType = (typeof generalInterests)[number];
