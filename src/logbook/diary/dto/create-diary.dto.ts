@@ -13,6 +13,11 @@ export class CreateDiaryDto {
   emoji?: string;
 
   @IsBoolean()
-  @ApiProperty({ type: String, example: diaryExample.favorite })
+  @ApiProperty({
+    type: String,
+    example: diaryExample.favorite,
+    description:
+      'No matter what you pass in here, this property will always end up being false.',
+  })
   favorite: boolean;
 }
