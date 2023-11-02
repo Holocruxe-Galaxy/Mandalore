@@ -12,9 +12,27 @@ import { ChatModule } from './chat/chat.module';
 import { AuthModule } from './auth/auth.module';
 import { LogbookModule } from './logbook/logbook.module';
 import { SettingsModule } from './settings/settings.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     ConfigModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
