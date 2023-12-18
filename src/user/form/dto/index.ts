@@ -5,3 +5,4 @@ export * from './personal.dto';
 export * from './professional.dto';
 
 export * from './steps.dto';
+export * from './update-steps.dto';

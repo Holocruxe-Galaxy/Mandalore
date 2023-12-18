@@ -1,5 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
-import { StepsDto } from './dto/steps.dto';
+import { StepsDto, UpdateStepsDto } from './dto';
 
 import { UserService } from '../user.service';
 import { CommonService } from 'src/common/common.service';
@@ -27,5 +27,18 @@ export class FormService {
     const results = await Promise.all(steps);
 
     return results.pop();
+  }
+
+  async updateUserData(stepsDto: UpdateStepsDto) {
+    const properties: UpdateStepsDto = {} as UpdateStepsDto;
+
+    for (const prop in stepsDto) {
+      const dto = { [prop]: stepsDto[prop] };
+      if (this.commonService.isDtoKey<UpdateStepsDto>(prop, dto, stepsDto))
+        properties[prop] = stepsDto[prop];
+    }
+
+    await this.userService.update(properties);
+    return 'Ok';
   }
 }

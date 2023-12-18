@@ -7,7 +7,12 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { Inject, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  UploadedFile,
+  UseInterceptors,
+  forwardRef,
+} from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
@@ -16,6 +21,10 @@ import { CreateMessageDto } from './dto';
 import { ParseSocketContent } from './pipes';
 import { AuthService } from 'src/auth/auth.service';
 import { UserKey } from 'src/common/interfaces';
+import { ImagesService } from 'src/common/images/images.service';
+import { ObjectId } from 'mongoose';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { resolve } from 'path';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -23,6 +32,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly chatService: ChatService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    @Inject(ImagesService)
+    private imagesService: ImagesService,
   ) {}
   @WebSocketServer() server: Server;
 
@@ -51,12 +62,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const connectedClients = await this.server.fetchSockets();
 
     for (const connectedClient of connectedClients) {
+      const chat = await this.chatService.broadcast(
+        createMessageDto.message,
+        connectedClient,
+      );
       connectedClient.emit(
         'broadcast',
-        await this.chatService.broadcast(
-          createMessageDto.message,
-          connectedClient,
-        ),
+        await this.chatService.getFullChat(chat),
       );
     }
   }
@@ -66,10 +78,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody(new ParseSocketContent()) createMessageDto: CreateMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    client.emit(
-      'clientChat',
-      await this.chatService.clientChat(createMessageDto.message, client),
+    const chat = await this.chatService.clientChat(
+      createMessageDto.message,
+      client.id,
     );
+    client.emit('clientChat', await this.chatService.getFullChat(chat));
+  }
+
+  async sendAudio(id: string, audio: string) {
+    const client = this.chatService.findClient(id);
+    const chat = await this.chatService.audioMessage(audio, client.id);
+    client.emit('audio', await this.chatService.getFullChat(chat));
   }
 
   @SubscribeMessage('connectedClients')
