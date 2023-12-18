@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { RemoteSocket, Socket } from 'socket.io';
 import { Model } from 'mongoose';
@@ -8,15 +8,17 @@ import { UserKey } from 'src/common/interfaces';
 import { Chat } from './schemas';
 import { User } from 'src/user/schemas';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { ImagesService } from 'src/common/images/images.service';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel(Chat.name)
     private readonly chatModel: Model<Chat>,
-
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
+    @Inject(ImagesService)
+    private imagesService: ImagesService,
   ) {}
   private readonly connectedClients: ConnectedClients = {};
 
@@ -45,6 +47,11 @@ export class ChatService {
     delete this.connectedClients[clientId];
   }
 
+  findClient(clientId: string): Socket {
+    const { client } = this.connectedClients[clientId];
+    return client;
+  }
+
   getConnectedClients() {
     return Object.keys(this.connectedClients).length;
   }
@@ -61,8 +68,18 @@ export class ChatService {
     return chat;
   }
 
-  async clientChat(message: string, client: Socket) {
-    const chat = await this.manageChat(client.id, { message, id: client.id });
+  async clientChat(message: string, client: string) {
+    const chat = await this.manageChat(client, { message, id: client });
+
+    return chat;
+  }
+
+  async audioMessage(message: string, client: string) {
+    const chat = await this.manageChat(client, {
+      message,
+      id: client,
+      isAudio: true,
+    });
 
     return chat;
   }
@@ -75,5 +92,16 @@ export class ChatService {
       },
       { new: true },
     );
+  }
+
+  async getFullChat(chat: Chat) {
+    const chatWithAudios = chat.messages.map(async (data) => {
+      if (data.isAudio) {
+        const message = await this.imagesService.findOne(data.message);
+        return { ...data, message };
+      }
+      return data;
+    });
+    return { ...chat, messages: await Promise.all(chatWithAudios) };
   }
 }
