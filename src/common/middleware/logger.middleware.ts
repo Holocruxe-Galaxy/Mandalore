@@ -22,7 +22,7 @@ export class LoggerMiddleware implements NestMiddleware {
     try {
       if (this.configService.get<string>('LOCAL')) {
         req.user = { email: 'nataluz@gmail.com' };
-        next();
+        return next();
       }
 
       const { authorization } = req.headers;
