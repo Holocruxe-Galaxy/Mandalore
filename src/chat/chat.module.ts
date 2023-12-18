@@ -6,6 +6,8 @@ import { ChatGateway } from './chat.gateway';
 import { Chat, ChatSchema } from './schemas';
 import { User, UserSchema } from 'src/user/schemas';
 import { AuthModule } from 'src/auth/auth.module';
+import { ImagesModule } from 'src/common/images/images.module';
+import { ChatController } from './chat.controller';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { AuthModule } from 'src/auth/auth.module';
       },
     ]),
     forwardRef(() => AuthModule),
+    ImagesModule,
   ],
   providers: [ChatGateway, ChatService],
+  controllers: [ChatController],
 })
 export class ChatModule {}
