@@ -30,7 +30,7 @@ import { SettingsModule } from './settings/settings.module';
     UserModule,
     ChatModule,
     LogbookModule,
-    SettingsModule,
+    SettingsModule
   ],
   controllers: [AppController],
   providers: [AppService],

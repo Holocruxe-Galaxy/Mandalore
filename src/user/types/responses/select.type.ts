@@ -1,1 +1,1 @@
-export const select = ['email', 'plan', 'role', 'status'];
+export const select = ['email', 'plan', 'role', 'status', 'personal.name'];

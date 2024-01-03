@@ -15,6 +15,7 @@ import { User, UserSchema } from './schemas';
 
 import { routes } from './routes';
 import { NotificationsModule } from 'src/settings/notifications/notifications.module';
+import { RoleService } from './role.service';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { NotificationsModule } from 'src/settings/notifications/notifications.mo
     RouterModule.register(routes),
   ],
   controllers: [UserController],
-  providers: [UserService, LoggerMiddleware],
-  exports: [UserService],
+  providers: [UserService, LoggerMiddleware, RoleService],
+  exports: [UserService, RoleService],
 })
 export class UserModule {}

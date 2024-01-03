@@ -19,6 +19,8 @@ import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
 import { UpdateStepsDto } from './form/dto';
+import { ChangeStatusDto } from './dto'
+import { resolve } from 'path/posix';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -56,6 +58,7 @@ export class UserService {
       const user: User = await this.userModel.findOne(email).lean();
       const status = this.dataPicker(user);
 
+
       if (status.status === 'PENDING') return status;
 
       const profileData: ProfileData = {
@@ -76,6 +79,36 @@ export class UserService {
     }
   }
 
+// Find a User by Id ---------------------------------------------------------
+  async findOneById(userId: string) {
+    try {
+      const user: User = await this.userModel.findOne({ _id: userId }).lean();
+      if (!user) 
+      throw new BadRequestException(
+        `The user with the id ${userId} does not exist in core database.`,
+      ); 
+      const status = this.dataPicker(user);
+
+/*       if (status.status === 'PENDING') return status; */
+  
+      const profileData: ProfileData = {
+        name: user.personal.name,
+        email: user.email,
+        phone: user.contactInfo.phone,
+        birthdate: user.personal.birthdate,
+        country: user.location.country,
+        provinceOrState: user.location.provinceOrState,
+        language: user.location.language,
+        ...status,
+        ...(user.location.city && { city: user.location.city }),
+      };
+      return profileData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+// Find a User by Id --------------------------------------------------------
+  
   // It picks the data requested in findOne()
   // its result depends on whether the user completed the form or not.
   private dataPicker({ status, ...user }: User): Pending | Complete {
@@ -161,6 +194,72 @@ export class UserService {
       console.log(error);
     }
   }
+
+ // Update Status -------------------------------------------------------------
+async reactivateUsers(data: ChangeStatusDto) {
+  const { statusType, users } = data;
+
+  try {
+    for (const userId of users) {
+      const user = await this.userModel.findById(userId)
+      if (user) {
+        if(['COMPLETE', 'INACTIVE', 'PENDING', 'BANNED', 'SUSPENDED'].includes(statusType)) {
+          user.status = statusType;
+          await user.save();
+        } else {
+          console.error(`Error: Estado no válido - ${statusType}`);
+        }
+      }
+    }
+  } catch (error) {
+    console.log(`reactivateUsers: ${error}`)
+  }
+  
+}
+
+async banUsers(data: ChangeStatusDto){
+  const { statusType, users } = data;
+
+  try {
+    for (const userId of users) {
+      const user = await this.userModel.findById(userId)
+
+      if (user) {
+        if (['COMPLETE', 'INACTIVE', 'PENDING', 'BANNED', 'SUSPENDED'].includes(statusType)) {
+          user.status = statusType;
+          await user.save();
+        } else {
+          console.error(`Error: Estado no válido - ${statusType}`);
+        }
+      }  
+    }
+  } catch (error) {
+    console.log(`banUsers: ${error}`)
+  }
+}
+
+ // Update Status -------------------------------------------------------------
+ async suspendUsers(data: ChangeStatusDto) {
+   const { statusType, users} = data;
+    console.log("Esto es data (statusType and user: ", data)
+   try {
+     for (const userId of users) {
+       const user = await this.userModel.findById(userId)
+
+       if (user) {
+        if(['COMPLETE', 'INACTIVE', 'PENDING', 'BANNED', 'SUSPENDED'].includes(statusType)) {
+          user.status = statusType;
+          await user.save();
+        }
+       } else {
+        console.error(`Error: Estado no válido - ${statusType}`);
+       }
+     }
+   } catch (error) {
+    console.log(`banUsers: ${error}`)
+   }
+
+ }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
