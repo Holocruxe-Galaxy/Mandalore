@@ -1,25 +1,20 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { User } from './schemas';
-import {
-  ContactInfoModule,
-  FormModule,
-  GroupModule,
-  LikesAndDislikesModule,
-  LocationModule,
-  MedicalModule,
-  PersonalModule,
-  ProfessionalProfileModule,
-  ShoppingModule,
-} from './modules';
-import { MongooseModule } from '@nestjs/mongoose';
-import { routes } from './routes';
-import { UserSchema } from './schemas/user.schema';
-import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { MongooseModule } from '@nestjs/mongoose';
+
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+
+import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
+import { CommonModule } from 'src/common/common.module';
+import { FormModule } from './form/form.module';
+
+import { User, UserSchema } from './schemas';
+
+import { routes } from './routes';
+import { NotificationsModule } from 'src/settings/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -31,15 +26,9 @@ import { HttpModule } from '@nestjs/axios';
     ]),
     ConfigModule,
     HttpModule,
-    GroupModule,
-    LikesAndDislikesModule,
-    MedicalModule,
-    forwardRef(() => ContactInfoModule),
-    forwardRef(() => LocationModule),
-    forwardRef(() => PersonalModule),
-    ProfessionalProfileModule,
-    ShoppingModule,
+    CommonModule,
     FormModule,
+    forwardRef(() => NotificationsModule),
     RouterModule.register(routes),
   ],
   controllers: [UserController],

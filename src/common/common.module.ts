@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CommonService } from './common.service';
-import { CommonController } from './common.controller';
+import { ImagesModule } from './images/images.module';
 
 @Module({
-  controllers: [CommonController],
   providers: [CommonService],
+  exports: [CommonService],
+  imports: [ImagesModule],
 })
 export class CommonModule {}

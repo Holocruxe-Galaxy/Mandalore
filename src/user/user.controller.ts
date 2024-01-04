@@ -1,22 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Scope,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, Scope } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 
-import { UpdateUserDto } from './dto/update-user.dto';
-
+@ApiTags('User')
 @Controller({ path: 'user', scope: Scope.REQUEST })
 export class UserController {
-  constructor(
-    private readonly userService: UserService, // private readonly cls: ClsService<EmailClsStore>,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   create() {
@@ -30,15 +19,10 @@ export class UserController {
   }
 
   @Get('data')
-  find() {
+  findData() {
     // Should return an object with the properties:
     // Status, Role, Country
     return this.userService.findOne();
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    // return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')

@@ -3,81 +3,47 @@ import {
   Injectable,
   forwardRef,
   Scope,
-  InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 
 import { User } from './schemas';
-import {
-  ContactInfoService,
-  LocationService,
-  PersonalService,
-} from './services';
+import { CommonService } from 'src/common/common.service';
+import { NotificationsService } from 'src/settings/notifications/notifications.service';
 
 import { RequestWidhUser } from 'src/common/interfaces';
-import { DtoType, StepType } from './form/types';
-import {
-  CreateContactInfoDto,
-  CreateLocationDto,
-  CreatePersonalDto,
-} from './dto';
-import { Active, Pending, Select } from './interfaces';
-import { select } from './types';
+import { Complete, Pending, ProfileData, Select } from './interfaces';
+import { StatusType, UserProperty, select } from './types';
+import { StepMap } from './form/types';
+import { UpdateStepsDto } from './form/dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
   constructor(
+    @Inject(forwardRef(() => ConfigService))
+    private configService: ConfigService,
+
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
 
-    @Inject(forwardRef(() => ContactInfoService))
-    private contactInfoService: ContactInfoService,
-    @Inject(forwardRef(() => PersonalService))
-    private personalService: PersonalService,
-    @Inject(forwardRef(() => LocationService))
-    private locationService: LocationService,
+    @Inject(forwardRef(() => CommonService))
+    private commonService: CommonService,
+
+    @Inject(forwardRef(() => NotificationsService))
+    private notificationsService: NotificationsService,
 
     @Inject(REQUEST) private request: RequestWidhUser,
   ) {}
 
   async create() {
     const email = this.request.user;
-    await this.userModel.create(email);
+    const user = await this.userModel.create(email);
 
-    return 'The user has been created successfully';
-  }
-
-  async stepFollower(step: StepType, dto: DtoType): Promise<User> {
-    try {
-      const data =
-        step === 'contactInfo'
-          ? await this.contactInfoService.create(dto as CreateContactInfoDto)
-          : step === 'location'
-          ? await this.locationService.create(dto as CreateLocationDto)
-          : step === 'personal'
-          ? await this.personalService.create(dto as CreatePersonalDto)
-          : undefined;
-
-      if (data) return this.addFormProp(step, data);
-      return;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  private async addFormProp(prop: StepType, dto: ObjectId) {
-    const email = this.request.user;
-
-    return await this.userModel.findOneAndUpdate(
-      email,
-      {
-        [prop]: dto,
-        $inc: { step: +1 },
-      },
-      { new: true },
-    );
+    this.notificationsService.create(email.email);
+    return user;
   }
 
   async findAll(): Promise<Select[]> {
@@ -87,32 +53,114 @@ export class UserService {
   async findOne() {
     try {
       const email = this.request.user;
-      const user: User = await this.userModel
-        .findOne(email)
-        .populate('location');
+      const user: User = await this.userModel.findOne(email).lean();
+      const status = this.dataPicker(user);
 
-      return this.dataPicker(user.toObject());
+      if (status.status === 'PENDING') return status;
+
+      const profileData: ProfileData = {
+        name: user.personal.name,
+        email: email.email,
+        phone: user.contactInfo.phone,
+        birthdate: user.personal.birthdate,
+        country: user.location.country,
+        provinceOrState: user.location.provinceOrState,
+        language: user.location.language,
+        ...status,
+        ...(user.location.city && { city: user.location.city }),
+      };
+
+      return profileData;
     } catch (error) {
-      throw new InternalServerErrorException(error.message);
+      console.log(error);
     }
   }
 
-  private dataPicker({ role, status, ...user }: User): Pending | Active {
-    if (status === 'PENDING') return { role, status, step: user.step };
-    else if (status === 'ACTIVE') {
-      const { country } = user.location[0];
+  // It picks the data requested in findOne()
+  // its result depends on whether the user completed the form or not.
+  private dataPicker({ status, ...user }: User): Pending | Complete {
+    if (status === 'PENDING') return { status, step: user.step };
+    if (status === 'COMPLETE') return { status };
+  }
 
-      return { role, status, country };
+  // It's called from FormService. It recieves a single user property
+  // and if it's the last one, it sets the status as 'COMPLETE'.
+  async stepFollower(step: StepMap): Promise<User> {
+    try {
+      const prop = Object.keys(step)[0];
+      const status: StatusType =
+        prop === 'generalInterests' ? 'COMPLETE' : null;
+
+      const data: UserProperty = this.addCompleteStatus(step, status);
+
+      const newStep = await this.getStepNumber(prop);
+
+      return await this.addFormStepToUser({ ...data, step: newStep });
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  // async update(service: StepDataValues, updateUserDto: StepsDto) {
-  //   const dtoData = service.name;
-  //   const email = this.request.user;
-  //   console.log({ [dtoData]: updateUserDto });
-  //   return await this.userModel.find(email, { [dtoData]: updateUserDto });
-  //   // return `This action updates a #${id} user`;
-  // }
+  private async addFormStepToUser(data: UserProperty) {
+    const user = this.request.user;
+
+    const response = await this.userModel.findOneAndUpdate(
+      user,
+      { ...data },
+      { new: true },
+    );
+
+    if (!response)
+      throw new BadRequestException(
+        `The user with the email ${user.email} does not exist in core database.`,
+      );
+    return response;
+  }
+
+  private async getStepNumber(prop: string) {
+    const email = this.request.user;
+    const user = await this.userModel.findOne(email);
+
+    if (user[prop]) return user.step;
+    if (
+      (prop === 'contactInfo' || prop === 'location') &&
+      !user.contactInfo &&
+      !user.location
+    ) {
+      return user.step + 1;
+    }
+    if (!user[prop]) return user.step + 1;
+    return user.step;
+  }
+
+  // If the user status should be changed to 'COMPLETE',
+  // it adds said property to the object that will update the user.
+  private addCompleteStatus(
+    prop: StepMap,
+    status: StatusType | null,
+  ): UserProperty {
+    if (status === null) return prop;
+    return { ...prop, status };
+  }
+
+  async update(steps: UpdateStepsDto) {
+    try {
+      const user = this.request.user;
+      const updates = [];
+
+      const data = await this.userModel.findOne(user);
+
+      for (const prop in steps) {
+        updates.push(
+          data.updateOne({ [prop]: { ...data[prop], ...steps[prop] } }),
+        );
+      }
+
+      await Promise.all(updates);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   remove(id: number) {
     return `This action removes a #${id} user`;

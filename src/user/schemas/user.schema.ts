@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
+
+import { StatusType } from '../types';
 import {
   ContactInfo,
-  Group,
-  LikesAndDislikes,
+  GeneralInterests,
   Location,
   Personal,
-  ProfessionalProfile,
-} from '.';
-import { PlanType, RoleType, StatusType } from '../types';
+  Professional,
+} from '../interfaces';
+import { Chat } from 'src/chat/schemas';
 
 @Schema()
 export class User extends Document {
@@ -21,41 +22,33 @@ export class User extends Document {
   @Prop({ default: 0 })
   step: number;
 
-  @Prop({ default: 'USER' })
-  role: RoleType;
-
-  @Prop({ default: 'FREE' })
-  plan: PlanType;
-
-  @Prop({
-    type: { type: SchemaTypes.ObjectId, ref: 'contactInfo' },
-  })
+  @Prop({ type: SchemaTypes.Mixed })
   contactInfo: ContactInfo;
 
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: Group.name }],
-  // })
-  // group: [Group];
-
-  // @Prop({
-  //   type: [{ type: SchemaTypes.ObjectId, ref: 'likesAndDislikes' }],
-  // })
-  // likesAndDislikes: [LikesAndDislikes];
-
   @Prop({
-    type: [{ type: SchemaTypes.ObjectId, ref: 'Location' }],
+    type: SchemaTypes.Mixed,
   })
-  location: [Location];
+  location: Location;
 
   @Prop({
-    type: { type: SchemaTypes.ObjectId, ref: 'personal' },
+    type: SchemaTypes.Mixed,
   })
   personal: Personal;
 
-  // @Prop({
-  //   type: [{ type: SchemaTypes, ref: 'professionalProfile' }],
-  // })
-  // professionalProfile: ProfessionalProfile;
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  professional: Professional;
+
+  @Prop({
+    type: SchemaTypes.Mixed,
+  })
+  generalInterests: GeneralInterests;
+
+  @Prop({
+    type: SchemaTypes.ObjectId,
+  })
+  chat: Chat[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
