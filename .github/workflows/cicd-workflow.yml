@@ -13,17 +13,17 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image
-        run: docker build -t ${{ secrets.DOCKER_USER }}/mandalore-core .
+        run: docker build -t deimoss/mandalore-core .
       - name: Publish image to docker hub
-        run: docker push ${{ secrets.DOCKER_USER }}/mandalore-core:latest
+        run: docker push deimoss/mandalore-core:latest
 
   deploy:
     needs: build
     runs-on: [mandalore-core]
     steps:
       - name: Pull image from docker hub
-        run: docker pull ${{ secrets.DOCKER_USER }}/mandalore-core:latest
+        run: docker pull deimoss/mandalore-core:latest
       - name: Delete old container
-        run: docker rm -f node ${{ secrets.DOCKER_USER }}/mandalore-core-container
+        run: docker rm -f node deimoss/mandalore-core-container
       - name: Run docker container
-        run: docker run -d -p 80:8080 --name mandalore-core-container ${{ secrets.DOCKER_USER }}/mandalore-core
+        run: docker run -d -p 80:8080 --name mandalore-core-container deimoss/mandalore-core
