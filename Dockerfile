@@ -1,7 +1,7 @@
 FROM node:18
 WORKDIR /app
 COPY package.json ./
-RUN npm install && npm run build
+RUN npm install
 COPY . .
 RUN npm install
 ENV DB_HOST=test-core-api.cirkyideh48r.us-east-1.rds.amazonaws.com
