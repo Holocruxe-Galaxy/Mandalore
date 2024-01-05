@@ -11,7 +11,7 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Buid docker image
-        run: docker build -t deimoss/mandalore .
+        run: docker build -t mandalore:latest .
       - name: Publish image to docker hub
         run: docker push mandalore-core:latest
 
