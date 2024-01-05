@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install && npm run build
+RUN npm install
 
 ENV DB_HOST=test-core-api.cirkyideh48r.us-east-1.rds.amazonaws.com
 ENV DB_PORT=3306
@@ -20,6 +20,6 @@ ENV SECRET_KEY_AWS=+9jyeqSDD+VSGMdRQCPrYbQMxnaAznhdfSHwABin
 ENV BUCKET_REGION=us-east-1
 ENV S3_BUCKET_NAME=holocruxe-images
 
-EXPOSE $PORT
+EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["npm","run","start"]
