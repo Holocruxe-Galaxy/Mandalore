@@ -1,0 +1,27 @@
+name: CICD
+
+on:
+  push:
+    branches: [alex/docker]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Buid docker image
+        run: docker build -t mandalore-core .
+      - name: Publish image to docker hub
+        run: docker push mandalore-core:latest
+
+  deploy:
+    needs: build
+    runs-on: [mandalore-docker]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull mandalore-core:latest
+      - name: Delete old container
+        run: docker rm -f node mandalore-core-container
+      - name: Run docker container
+        run: docker run -d -p 80:8080 --name mandalore-core-container mandalore-core
