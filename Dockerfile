@@ -1,11 +1,9 @@
 FROM node:18-bullseye
-
 WORKDIR /app
-
-COPY . .
-
+COPY package.json ./
 RUN npm install
-
+COPY . .
+RUN npm install
 ENV DB_HOST=test-core-api.cirkyideh48r.us-east-1.rds.amazonaws.com
 ENV DB_PORT=3306
 ENV DB_USER=holocruxe
@@ -19,7 +17,5 @@ ENV ACCESS_KEY_ID_AWS=AKIAQ6GID5GSQCFV6KFW
 ENV SECRET_KEY_AWS=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
 ENV BUCKET_REGION=us-east-1
 ENV S3_BUCKET_NAME=holocruxe-images
-
 EXPOSE 8080
-
 CMD ["npm","run","start"]
