@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: [ubuntu-latest]
     steps:
+      - name: Checkout source
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build docker image
