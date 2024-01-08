@@ -5,23 +5,32 @@ on:
     branches: [alex/docker]
 
 jobs:
-  build:
-    runs-on: [ubuntu-latest]
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
-      - name: Login to docker hub
-        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build docker image
-        run: docker build -t deimoss/mandalore-image:latest .
-      - name: Publish image to docker hub
-        run: docker push deimoss/mandalore-image:latest
-
   deploy:
-    needs: build
-    runs-on: [mandalore-docker]
+    runs-on: [mandalore-core]
     steps:
-      - name: Pull image from docker hub
-        run: docker pull deimoss/mandalore-image:latest
-      - name: Run docker container
-        run: docker run -d -p 80:8080 deimoss/mandalore-image:latest
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Stop pm2
+        run: pm2 delete all
+
+      - name: Change to project directory
+        run: cd projects/Mandalore
+
+      - name: Git fetch
+        run: git fetch
+
+      - name: Checkout alex/docker
+        run: git checkout alex/docker
+
+      - name: Pull latest changes
+        run: git pull origin alex/docker
+
+      - name: Install dependencies (adjust as needed)
+        run: npm install
+
+      - name: run build
+        run: npm run build
+
+      - name: Run your project (adjust as needed)
+        run: pm2 start dist/main.js
