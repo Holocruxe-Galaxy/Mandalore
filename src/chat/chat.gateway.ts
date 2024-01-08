@@ -7,12 +7,7 @@ import {
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import {
-  Inject,
-  UploadedFile,
-  UseInterceptors,
-  forwardRef,
-} from '@nestjs/common';
+import { Inject, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { ChatService } from './chat.service';
@@ -22,9 +17,6 @@ import { ParseSocketContent } from './pipes';
 import { AuthService } from 'src/auth/auth.service';
 import { UserKey } from 'src/common/interfaces';
 import { ImagesService } from 'src/common/images/images.service';
-import { ObjectId } from 'mongoose';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { resolve } from 'path';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
