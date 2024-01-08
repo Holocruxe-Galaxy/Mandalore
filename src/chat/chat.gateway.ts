@@ -24,8 +24,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly chatService: ChatService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
-    @Inject(ImagesService)
-    private imagesService: ImagesService,
   ) {}
   @WebSocketServer() server: Server;
 
