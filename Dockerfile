@@ -1,15 +1,17 @@
 
 FROM node:18
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
+COPY package.json .
 
 RUN npm install
 
 COPY . .
 
+RUN rm -r package-lock.josn
+
 RUN npm run build
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "npm","start" ]
 
