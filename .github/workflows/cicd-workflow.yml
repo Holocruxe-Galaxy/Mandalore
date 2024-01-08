@@ -15,7 +15,7 @@ jobs:
         run: pm2 delete all
 
       - name: Change to project directory
-        run: cd projects/Mandalore
+        run: cd && cd Mandalore
 
       - name: Git fetch
         run: git fetch
