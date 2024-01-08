@@ -2,7 +2,7 @@ name: CICD
 
 on:
   push:
-    branches: [alex/docker]
+    branches: [main]
 
 jobs:
   deploy:
@@ -11,26 +11,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Stop pm2
-        run: pm2 delete all
-
       - name: Change to project directory
         run: cd && cd Mandalore
 
-      - name: Git fetch
-        run: git fetch
+      - name: Stop pm2
+        run: pm2 delete all
 
-      - name: Checkout alex/docker
-        run: git checkout alex/docker
+      - name: Git pull
+        run: git pull origin main
 
-      - name: Pull latest changes
-        run: git pull origin alex/docker
-
-      - name: Install dependencies (adjust as needed)
+      - name: Install dependencies
         run: npm install
 
       - name: run build
         run: npm run build
 
-      - name: Run your project (adjust as needed)
+      - name: Run your project
         run: pm2 start dist/main.js
