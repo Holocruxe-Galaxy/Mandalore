@@ -9,7 +9,7 @@ RUN npm install
 
 COPY . .
 
-RUN rm -r package-lock.josn
+RUN rm -r package-lock.json
 
 RUN npm run build
 
