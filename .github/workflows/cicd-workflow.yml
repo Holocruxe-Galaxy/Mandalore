@@ -24,4 +24,4 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull deimoss/mandalore-image:latest
       - name: Run docker container
-        run: docker run -d -p 80:8080 --name deimoss/mandalore-image-container deimoss/mandalore-image:latest
+        run: docker run -d -p 80:8080 deimoss/mandalore-image:latest
