@@ -1,0 +1,30 @@
+name: CICD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: [mandalore-core]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Change to project directory
+        run: cd && cd Mandalore
+
+      - name: Stop pm2
+        run: pm2 delete all
+
+      - name: Git pull
+        run: git pull origin main
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: run build
+        run: npm run build
+
+      - name: Run your project
+        run: pm2 start dist/main.js
