@@ -55,6 +55,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).exclude('/').forRoutes('*');
+    consumer.apply(LoggerMiddleware).exclude('/', '/auth/login').forRoutes('*');
   }
 }
