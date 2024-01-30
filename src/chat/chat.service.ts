@@ -35,12 +35,12 @@ export class ChatService {
 
     if (!chatSession?.messages?.length) {
       const email = this.connectedClients[clientId].email;
-      const { _id } = await this.chatModel.findOneAndDelete({
+      const user = await this.chatModel.findOneAndDelete({
         sessionId: clientId,
       });
       await this.userModel.findOneAndUpdate(
         { email },
-        { $pull: { chat: _id } },
+        { $pull: { chat: user['_id'] } },
       );
     }
 
