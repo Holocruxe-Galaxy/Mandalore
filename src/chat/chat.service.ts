@@ -25,25 +25,24 @@ export class ChatService {
   async registerClient(client: Socket, email: UserKey) {
     this.connectedClients[client.id] = { ...email, client };
 
-    const chat = await this.chatModel.create({ sessionId: client.id });
-
-    await this.userModel.findOneAndUpdate(email, { $push: { chat } });
+    //Ahora en vez de pushear un nuevo chat cada vez que se conecta al chat
+    //simplemente se comprueba si existe un chat asociado con el Email
+    //y si no existe se crea
+    const chat = await this.chatModel.findOne({
+      userEmail: email.email,
+    });
+    if (!chat) {
+      await this.chatModel.create({
+        id: client.id,
+        userEmail: email.email,
+      });
+    }
   }
 
   async removeClient(clientId: string) {
-    const chatSession = await this.chatModel.findOne({ sessionId: clientId });
-
-    if (!chatSession?.messages?.length) {
-      const email = this.connectedClients[clientId].email;
-      const user = await this.chatModel.findOneAndDelete({
-        sessionId: clientId,
-      });
-      await this.userModel.findOneAndUpdate(
-        { email },
-        { $pull: { chat: user['_id'] } },
-      );
-    }
-
+    //Ahora en vez de modificar el chat cuando se desconecta, simplemente se cierra la sesión de socket
+    //en el futuro quiza sea ideal modificar el documento del chat cuando se desconecte
+    //agregándole la propiedad de horario de última vez que estuvo conectado
     delete this.connectedClients[clientId];
   }
 
@@ -60,33 +59,78 @@ export class ChatService {
     message: string,
     client: RemoteSocket<DefaultEventsMap, any>,
   ) {
+    let date = new Date();
     const chat = await this.manageChat(client.id, {
       message,
       isBroadcasted: true,
+      date,
     });
 
     return chat;
   }
-
-  async clientChat(message: string, client: string) {
-    const chat = await this.manageChat(client, { message, id: client });
-
-    return chat;
-  }
-
-  async audioMessage(message: string, client: string) {
-    const chat = await this.manageChat(client, {
+  //En vez de mandarlo a la función manage chat, hago los cambios directamente en ésta función
+  async clientChat(message: string, email: string, id?: string) {
+    //Busco el chat asociado con el email
+    const { messages } = await this.chatModel.findOne({ userEmail: email });
+    //Creo el mensaje según el interface de Message
+    let messageTransform: Message = {
       message,
-      id: client,
-      isAudio: true,
-    });
+      date: new Date(),
+      id,
+    } as Message;
 
-    return chat;
+    //Compruebo si tiene algo para no generar un error
+    //y no romper el código con la función array.concat en caso de que no exista el array
+    if (messages && messages.length) {
+      let messageConcat: Message[] = messages.concat(messageTransform);
+      return await this.chatModel.findOneAndUpdate(
+        { userEmail: email },
+        { messages: messageConcat },
+        { new: true },
+      );
+    } else {
+      return await this.chatModel.findOneAndUpdate(
+        { userEmail: email },
+        { messages: [messageTransform] },
+        { new: true },
+      );
+    }
   }
 
-  async manageChat(sessionId: string, message: Message): Promise<Chat> {
+  async audioMessage(message: string, clientId: string) {
+    const email = this.connectedClients[clientId].email;
+
+    const { messages } = await this.chatModel.findOne({ userEmail: email });
+    let messageTransform: Message = {
+      message,
+      date: new Date(),
+      id: clientId,
+      isAudio: true,
+    } as Message;
+
+    //Compruebo si tiene algo para no generar un error y no romper el código con el .concat si la propiedad messages es null
+    if (messages && messages.length) {
+      //se concatena el nuevo mensaje al antiguo array
+      let messageConcat: Message[] = messages.concat(messageTransform);
+      return await this.chatModel.findOneAndUpdate(
+        { userEmail: email },
+        { messages: messageConcat },
+        { new: true },
+      );
+    } else {
+      //Si messages es null, para no romper el código con un .concat
+      //se crea un arreglo con el nuevo mensaje dentro
+      return await this.chatModel.findOneAndUpdate(
+        { userEmail: email },
+        { messages: [messageTransform] },
+        { new: true },
+      );
+    }
+  }
+
+  async manageChat(id: string, message: Message): Promise<Chat> {
     return await this.chatModel.findOneAndUpdate(
-      { sessionId },
+      { id },
       {
         $push: { messages: message },
       },
@@ -94,7 +138,7 @@ export class ChatService {
     );
   }
 
-  async getFullChat(chat: Chat) {
+  async getChat(chat: Chat) {
     const chatWithAudios = chat.messages.map(async (data) => {
       if (data.isAudio) {
         const message = await this.imagesService.findOne(data.message);
