@@ -45,9 +45,7 @@ export class User extends Document {
   })
   generalInterests: GeneralInterests;
 
-  @Prop({
-    type: SchemaTypes.ObjectId,
-  })
+  @Prop()
   chat: Chat[];
 }
 

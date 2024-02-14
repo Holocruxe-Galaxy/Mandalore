@@ -24,8 +24,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly chatService: ChatService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
-    @Inject(ImagesService)
-    private imagesService: ImagesService,
   ) {}
   @WebSocketServer() server: Server;
 
@@ -58,29 +56,35 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         createMessageDto.message,
         connectedClient,
       );
-      connectedClient.emit(
-        'broadcast',
-        await this.chatService.getFullChat(chat),
-      );
+      connectedClient.emit('broadcast', await this.chatService.getChat(chat));
     }
   }
 
   @SubscribeMessage('clientChat')
   async clientChat(
     @MessageBody(new ParseSocketContent()) createMessageDto: CreateMessageDto,
-    @ConnectedSocket() client: Socket,
+    id: string,
   ) {
+    //me traigo el cliente de socket con el respectivo id que recibo por query ejemplo: RO8IZLuKqkM1NdYhAAAB
+    const client = this.chatService.findClient(id);
+
+    //Se trae el email a partir del toquen para después buscar el chat asociado a ese email
+    const token = client.handshake.headers.authorization;
+    const email: UserKey = await this.authService.isUser(token);
+
     const chat = await this.chatService.clientChat(
       createMessageDto.message,
-      client.id,
+      email.email,
+      id,
     );
-    client.emit('clientChat', await this.chatService.getFullChat(chat));
+    client.emit('clientChat', chat);
   }
 
   async sendAudio(id: string, audio: string) {
     const client = this.chatService.findClient(id);
-    const chat = await this.chatService.audioMessage(audio, client.id);
-    client.emit('audio', await this.chatService.getFullChat(chat));
+    const chat = await this.chatService.audioMessage(audio, id);
+
+    client.emit('audio', await this.chatService.getChat(chat));
   }
 
   @SubscribeMessage('connectedClients')
