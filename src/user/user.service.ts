@@ -1,10 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  forwardRef,
-  Scope,
-  BadRequestException,
-} from '@nestjs/common';
+import { Inject, Injectable, forwardRef, Scope, BadRequestException } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
@@ -19,6 +13,7 @@ import { Complete, Pending, ProfileData, Select } from './interfaces';
 import { StatusType, UserProperty, select } from './types';
 import { StepMap } from './form/types';
 import { UpdateStepsDto } from './form/dto';
+import { UpdateUserDto } from './dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -165,4 +160,24 @@ export class UserService {
   // remove(id: number) {
   //   return `This action removes a #${id} user`;
   // }
+
+  async create(userDto: any) {
+    const user = await this.userModel.create(userDto);
+
+    return user;
+  }
+
+  async findOne(email: string) {
+    const user = await this.userModel.findOne({ email });
+    return user;
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+    if (!user) throw new BadRequestException('User not found');
+
+    const updateUser = await this.userModel.updateOne({ _id: id }, updateUserDto);
+
+    return updateUser;
+  }
 }

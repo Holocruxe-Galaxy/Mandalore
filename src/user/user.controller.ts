@@ -1,6 +1,9 @@
-import { Controller, Get, Post, Param, Delete, Scope } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, Scope, Body, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
+import { Response } from 'express';
+import { stat } from 'fs';
+import { CreateUserDto } from './dto';
 
 @ApiTags('User')
 @Controller({ path: 'user', scope: Scope.REQUEST })
@@ -29,4 +32,11 @@ export class UserController {
   // remove(@Param('id') id: string) {
   //   return this.userService.remove(+id);
   // }
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    const user = await this.userService.create(createUserDto);
+
+    res.json({ status: 'ok', data: user });
+  }
 }
