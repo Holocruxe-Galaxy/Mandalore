@@ -16,29 +16,29 @@ export class FormService {
     private commonService: CommonService,
   ) {}
 
-  async stepManager(stepsDto: StepsDto) {
-    const steps: Promise<User>[] = [];
+  // async stepManager(stepsDto: StepsDto) {
+  //   const steps: Promise<User>[] = [];
 
-    for (const step in stepsDto) {
-      const dto = { [step]: stepsDto[step] };
-      if (this.commonService.isDtoKey<StepsDto>(step, dto, stepsDto))
-        steps.push(this.userService.stepFollower(dto));
-    }
-    const results = await Promise.all(steps);
+  //   for (const step in stepsDto) {
+  //     const dto = { [step]: stepsDto[step] };
+  //     if (this.commonService.isDtoKey<StepsDto>(step, dto, stepsDto))
+  //       steps.push(this.userService.stepFollower(dto));
+  //   }
+  //   const results = await Promise.all(steps);
 
-    return results.pop();
-  }
+  //   return results.pop();
+  // }
 
-  async updateUserData(stepsDto: UpdateStepsDto) {
-    const properties: UpdateStepsDto = {} as UpdateStepsDto;
+  // async updateUserData(stepsDto: UpdateStepsDto) {
+  //   const properties: UpdateStepsDto = {} as UpdateStepsDto;
 
-    for (const prop in stepsDto) {
-      const dto = { [prop]: stepsDto[prop] };
-      if (this.commonService.isDtoKey<UpdateStepsDto>(prop, dto, stepsDto))
-        properties[prop] = stepsDto[prop];
-    }
+  //   for (const prop in stepsDto) {
+  //     const dto = { [prop]: stepsDto[prop] };
+  //     if (this.commonService.isDtoKey<UpdateStepsDto>(prop, dto, stepsDto))
+  //       properties[prop] = stepsDto[prop];
+  //   }
 
-    await this.userService.update(properties);
-    return 'Ok';
-  }
+  //   await this.userService.update(properties);
+  //   return 'Ok';
+  // }
 }

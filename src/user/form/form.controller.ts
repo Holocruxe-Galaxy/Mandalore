@@ -8,14 +8,14 @@ import { StepsDto, UpdateStepsDto } from './dto';
 export class FormController {
   constructor(private readonly formService: FormService) {}
 
-  @Post('step')
-  @HttpCode(200)
-  async stepForm(@Body() data: StepsDto) {
-    return this.formService.stepManager(data);
-  }
+  // @Post('step')
+  // @HttpCode(200)
+  // async stepForm(@Body() data: StepsDto) {
+  //   return this.formService.stepManager(data);
+  // }
 
-  @Patch('step')
-  async updateStepForm(@Body() data: UpdateStepsDto) {
-    return this.formService.updateUserData(data);
-  }
+  // @Patch('step')
+  // async updateStepForm(@Body() data: UpdateStepsDto) {
+  //   return this.formService.updateUserData(data);
+  // }
 }

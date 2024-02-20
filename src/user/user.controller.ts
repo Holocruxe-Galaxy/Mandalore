@@ -7,26 +7,26 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create() {
-    return this.userService.create();
-  }
+  // @Post()
+  // create() {
+  //   return this.userService.create();
+  // }
 
-  @Get('all')
-  findAll() {
-    // Email, Role, Plan, Status
-    return this.userService.findAll();
-  }
+  // @Get('all')
+  // findAll() {
+  //   // Email, Role, Plan, Status
+  //   return this.userService.findAll();
+  // }
 
-  @Get('data')
-  findData() {
-    // Should return an object with the properties:
-    // Status, Role, Country
-    return this.userService.findOne();
-  }
+  // @Get('data')
+  // findData() {
+  //   // Should return an object with the properties:
+  //   // Status, Role, Country
+  //   return this.userService.findOne();
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(+id);
+  // }
 }
