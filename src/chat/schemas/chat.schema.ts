@@ -8,7 +8,7 @@ export class Chat extends Document {
   messages: Message[];
 
   @Prop()
-  userEmail: string;
+  userId: string;
 
   @Prop()
   sessionId: string;

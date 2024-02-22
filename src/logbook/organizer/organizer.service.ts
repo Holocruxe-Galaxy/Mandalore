@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { OrganizerDto, UpdateOrganizerDto } from './dto';
-import { RequestWidhUser } from 'src/common/interfaces';
+import { RequestWithUser } from 'src/common/interfaces';
 
 import { Organizer } from './schemas';
 import { OrganizerDtosType, OrganizerParamsType } from './types';
@@ -12,14 +12,14 @@ import { OrganizerDtosType, OrganizerParamsType } from './types';
 @Injectable()
 export class OrganizerService {
   constructor(
-    @Inject(REQUEST) private request: RequestWidhUser,
+    @Inject(REQUEST) private request: RequestWithUser,
     @InjectModel(Organizer.name)
     private readonly organizerModel: Model<Organizer>,
   ) {}
 
   private async create() {
-    const { email: user } = this.request.user;
-    await this.organizerModel.create({ user });
+    const { userId } = this.request.user;
+    await this.organizerModel.create({ userId });
   }
 
   async addToOrganizerManager(organizerDto: OrganizerDto) {
@@ -37,11 +37,11 @@ export class OrganizerService {
   }
 
   private async addToOrganizer(key: string, data: OrganizerDto) {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
 
     this.caseModifier(key, data);
     const organizer = await this.organizerModel.findOneAndUpdate(
-      { user },
+      { userId },
       {
         $push: {
           [key]: { ...data[key], createdAt: new Date() },
@@ -64,9 +64,11 @@ export class OrganizerService {
   }
 
   async findAll(prop: OrganizerParamsType) {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
 
-    const entrances = await this.organizerModel.findOne({ user }).select(prop);
+    const entrances = await this.organizerModel
+      .findOne({ userId })
+      .select(prop);
 
     return (entrances[prop] as any).filter((e: any) => !e.deletedAt);
   }
@@ -90,11 +92,11 @@ export class OrganizerService {
   }
 
   private async update(key: string, updateOrganizerDto: OrganizerDtosType) {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
     const fields = this.updateFieldsManager(key, updateOrganizerDto[key]);
 
     const toUpdate = await this.organizerModel.findOneAndUpdate(
-      { user, [`${key}.createdAt`]: updateOrganizerDto.createdAt },
+      { userId, [`${key}.createdAt`]: updateOrganizerDto.createdAt },
       { $set: fields },
       { new: true },
     );

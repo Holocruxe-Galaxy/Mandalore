@@ -12,7 +12,7 @@ import { Diary, DiaryDocument } from './schemas';
 
 import { CreateDiaryDto } from './dto/create-diary.dto';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
-import { RequestWidhUser } from 'src/common/interfaces';
+import { RequestWithUser } from 'src/common/interfaces';
 import { CommonService } from 'src/common/common.service';
 import { ImagesService } from 'src/common/images/images.service';
 
@@ -28,21 +28,21 @@ export class DiaryService {
     @Inject(ImagesService)
     private imagesService: ImagesService,
 
-    @Inject(REQUEST) private request: RequestWidhUser,
+    @Inject(REQUEST) private request: RequestWithUser,
   ) {}
 
   async create(createDiaryDto: CreateDiaryDto): Promise<Diary> {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
 
-    return await this.diaryModel.create({ ...createDiaryDto, user });
+    return await this.diaryModel.create({ ...createDiaryDto, userId });
   }
 
   async findAll() {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
 
     const diaryEntries: DiaryDocument[] = (await this.diaryModel
       .find({
-        user,
+        userId,
         deletedAt: null,
       })
       .sort({ createdAt: -1 })) as DiaryDocument[];
@@ -118,9 +118,9 @@ export class DiaryService {
   }
 
   private async checkIfAuthorizedUser(id: ObjectId) {
-    const { email: user } = this.request.user;
+    const { userId } = this.request.user;
     const entry = await this.diaryModel.findById(id);
-    if (entry.user !== user)
+    if (entry.userId !== userId)
       throw new UnauthorizedException(
         'The entry you are trying to modify is not yours.',
       );

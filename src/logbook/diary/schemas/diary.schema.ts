@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Diary extends Document {
   @Prop({ nullable: false })
-  user: string;
+  userId: string;
 
   @Prop({ nullable: false })
   content: string;

@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -45,7 +44,6 @@ import { ThrottlerModule } from '@nestjs/throttler';
     HttpModule,
     CommonModule,
     AuthModule,
-    UserModule,
     ChatModule,
     LogbookModule,
     SettingsModule,

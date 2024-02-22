@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { UserKey } from './user-key.interface';
 
-export interface RequestWidhUser extends Request {
+export interface RequestWithUser extends Request {
   user: UserKey;
 }
