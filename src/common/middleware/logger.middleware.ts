@@ -8,7 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { Response, NextFunction } from 'express';
-import { RequestWidhUser, UserResponseKey } from '../interfaces';
+import { RequestWithUser, UserKey } from '../interfaces';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -18,21 +18,21 @@ export class LoggerMiddleware implements NestMiddleware {
     private readonly httpService: HttpService,
   ) {}
 
-  async use(req: RequestWidhUser, res: Response, next: NextFunction) {
+  async use(req: RequestWithUser, res: Response, next: NextFunction) {
     try {
       if (this.configService.get<string>('LOCAL')) {
-        req.user = { email: 'nataluz@gmail.com' };
+        req.user = { userId: 'nataluz@gmail.com' };
         return next();
       }
 
       const { authorization } = req.headers;
-      const { data } = await this.httpService.axiosRef.get<UserResponseKey>(
+      const { data } = await this.httpService.axiosRef.get<UserKey>(
         `${this.configService.get<string>('AUTHMICRO_SERVICE')}/users/verify`,
         { headers: { authorization } },
       );
 
-      const email = data.userMail;
-      req.user = { email };
+      const { userId } = data;
+      req.user = { userId };
 
       next();
     } catch (error) {

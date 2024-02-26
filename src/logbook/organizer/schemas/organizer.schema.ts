@@ -5,7 +5,7 @@ import { Finances, Note, Task } from '../interfaces';
 @Schema({ timestamps: true })
 export class Organizer extends Document {
   @Prop({ nullable: false })
-  user: string;
+  userId: string;
 
   @Prop({ type: SchemaTypes.Mixed })
   notes: Note[];

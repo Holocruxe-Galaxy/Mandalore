@@ -10,7 +10,7 @@ export class Notification extends Document {
   email: boolean;
 
   @Prop({ required: true })
-  user: string;
+  userId: string;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

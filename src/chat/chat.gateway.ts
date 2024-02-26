@@ -16,7 +16,6 @@ import { CreateMessageDto } from './dto';
 import { ParseSocketContent } from './pipes';
 import { AuthService } from 'src/auth/auth.service';
 import { UserKey } from 'src/common/interfaces';
-import { ImagesService } from 'src/common/images/images.service';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -70,11 +69,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     //Se trae el email a partir del toquen para después buscar el chat asociado a ese email
     const token = client.handshake.headers.authorization;
-    const email: UserKey = await this.authService.isUser(token);
+    const { userId }: UserKey = await this.authService.isUser(token);
 
     const chat = await this.chatService.clientChat(
       createMessageDto.message,
-      email.email,
+      userId,
       id,
     );
     client.emit('clientChat', chat);

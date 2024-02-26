@@ -6,7 +6,6 @@ import { Model } from 'mongoose';
 import { ConnectedClients, Message } from './interfaces';
 import { UserKey } from 'src/common/interfaces';
 import { Chat } from './schemas';
-import { User } from 'src/user/schemas';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { ImagesService } from 'src/common/images/images.service';
 
@@ -15,26 +14,24 @@ export class ChatService {
   constructor(
     @InjectModel(Chat.name)
     private readonly chatModel: Model<Chat>,
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
     @Inject(ImagesService)
     private imagesService: ImagesService,
   ) {}
   private readonly connectedClients: ConnectedClients = {};
 
-  async registerClient(client: Socket, email: UserKey) {
-    this.connectedClients[client.id] = { ...email, client };
+  async registerClient(client: Socket, { userId }: UserKey) {
+    this.connectedClients[client.id] = { userId, client };
 
     //Ahora en vez de pushear un nuevo chat cada vez que se conecta al chat
     //simplemente se comprueba si existe un chat asociado con el Email
     //y si no existe se crea
     const chat = await this.chatModel.findOne({
-      userEmail: email.email,
+      userId,
     });
     if (!chat) {
       await this.chatModel.create({
         id: client.id,
-        userEmail: email.email,
+        userId,
       });
     }
   }
@@ -59,7 +56,7 @@ export class ChatService {
     message: string,
     client: RemoteSocket<DefaultEventsMap, any>,
   ) {
-    let date = new Date();
+    const date = new Date();
     const chat = await this.manageChat(client.id, {
       message,
       isBroadcasted: true,
@@ -69,11 +66,11 @@ export class ChatService {
     return chat;
   }
   //En vez de mandarlo a la función manage chat, hago los cambios directamente en ésta función
-  async clientChat(message: string, email: string, id?: string) {
+  async clientChat(message: string, userId: string, id?: string) {
     //Busco el chat asociado con el email
-    const { messages } = await this.chatModel.findOne({ userEmail: email });
+    const { messages } = await this.chatModel.findOne({ userId });
     //Creo el mensaje según el interface de Message
-    let messageTransform: Message = {
+    const messageTransform: Message = {
       message,
       date: new Date(),
       id,
@@ -82,15 +79,15 @@ export class ChatService {
     //Compruebo si tiene algo para no generar un error
     //y no romper el código con la función array.concat en caso de que no exista el array
     if (messages && messages.length) {
-      let messageConcat: Message[] = messages.concat(messageTransform);
+      const messageConcat: Message[] = messages.concat(messageTransform);
       return await this.chatModel.findOneAndUpdate(
-        { userEmail: email },
+        { userId },
         { messages: messageConcat },
         { new: true },
       );
     } else {
       return await this.chatModel.findOneAndUpdate(
-        { userEmail: email },
+        { userId },
         { messages: [messageTransform] },
         { new: true },
       );
@@ -98,10 +95,10 @@ export class ChatService {
   }
 
   async audioMessage(message: string, clientId: string) {
-    const email = this.connectedClients[clientId].email;
+    const userId = this.connectedClients[clientId].userId;
 
-    const { messages } = await this.chatModel.findOne({ userEmail: email });
-    let messageTransform: Message = {
+    const { messages } = await this.chatModel.findOne({ userId });
+    const messageTransform: Message = {
       message,
       date: new Date(),
       id: clientId,
@@ -111,9 +108,9 @@ export class ChatService {
     //Compruebo si tiene algo para no generar un error y no romper el código con el .concat si la propiedad messages es null
     if (messages && messages.length) {
       //se concatena el nuevo mensaje al antiguo array
-      let messageConcat: Message[] = messages.concat(messageTransform);
+      const messageConcat: Message[] = messages.concat(messageTransform);
       return await this.chatModel.findOneAndUpdate(
-        { userEmail: email },
+        { userId },
         { messages: messageConcat },
         { new: true },
       );
@@ -121,7 +118,7 @@ export class ChatService {
       //Si messages es null, para no romper el código con un .concat
       //se crea un arreglo con el nuevo mensaje dentro
       return await this.chatModel.findOneAndUpdate(
-        { userEmail: email },
+        { userId },
         { messages: [messageTransform] },
         { new: true },
       );
